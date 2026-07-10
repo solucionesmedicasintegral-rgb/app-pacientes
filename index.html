@@ -4,488 +4,953 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>App Pacientes · Dr. Gabriel Morales</title>
-<script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
 <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-slate-100">
 <div id="root"></div>
-
-<script type="text/babel" data-presets="react">
-const { useState } = React;
+<script>
+const {
+  useState
+} = React;
 
 // ---------- Iconos (SVG inline, sin librerías) ----------
-function Ico({ name, size = 20, className = "" }) {
+function Ico({
+  name,
+  size = 20,
+  className = ""
+}) {
   const icons = {
-    Calendar: <><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></>,
-    ShoppingBag: <><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></>,
-    Home: <><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"/><polyline points="9 22 9 12 15 12 15 22"/></>,
-    Package: <><path d="M21 8v8a2 2 0 0 1-1 1.73l-7 4a2 2 0 0 1-2 0l-7-4A2 2 0 0 1 3 16V8a2 2 0 0 1 1-1.73l7-4a2 2 0 0 1 2 0l7 4A2 2 0 0 1 21 8Z"/><polyline points="3.29 7 12 12 20.71 7"/><line x1="12" y1="22" x2="12" y2="12"/></>,
-    Plus: <><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></>,
-    Check: <polyline points="20 6 9 17 4 12"/>,
-    Clock: <><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></>,
-    CreditCard: <><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></>,
-    ChevronLeft: <polyline points="15 18 9 12 15 6"/>,
-    ChevronRight: <polyline points="9 18 15 12 9 6"/>,
-    Repeat: <><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></>,
-    Stethoscope: <><path d="M6 3v5a4 4 0 0 0 8 0V3"/><path d="M5 3h2M13 3h2"/><path d="M10 15v1a5 5 0 0 0 5 5 4 4 0 0 0 4-4v-2"/><circle cx="20" cy="10" r="2"/></>,
-    Sparkles: <path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9Z"/>,
-    TrendingUp: <><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></>,
-    User: <><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></>,
-    ShieldCheck: <><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"/><polyline points="9 12 11.5 14.5 16 10"/></>,
+    Calendar: /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("rect", {
+      x: "3",
+      y: "4",
+      width: "18",
+      height: "18",
+      rx: "2"
+    }), /*#__PURE__*/React.createElement("line", {
+      x1: "16",
+      y1: "2",
+      x2: "16",
+      y2: "6"
+    }), /*#__PURE__*/React.createElement("line", {
+      x1: "8",
+      y1: "2",
+      x2: "8",
+      y2: "6"
+    }), /*#__PURE__*/React.createElement("line", {
+      x1: "3",
+      y1: "10",
+      x2: "21",
+      y2: "10"
+    })),
+    ShoppingBag: /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("path", {
+      d: "M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"
+    }), /*#__PURE__*/React.createElement("line", {
+      x1: "3",
+      y1: "6",
+      x2: "21",
+      y2: "6"
+    }), /*#__PURE__*/React.createElement("path", {
+      d: "M16 10a4 4 0 0 1-8 0"
+    })),
+    Home: /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("path", {
+      d: "M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"
+    }), /*#__PURE__*/React.createElement("polyline", {
+      points: "9 22 9 12 15 12 15 22"
+    })),
+    Package: /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("path", {
+      d: "M21 8v8a2 2 0 0 1-1 1.73l-7 4a2 2 0 0 1-2 0l-7-4A2 2 0 0 1 3 16V8a2 2 0 0 1 1-1.73l7-4a2 2 0 0 1 2 0l7 4A2 2 0 0 1 21 8Z"
+    }), /*#__PURE__*/React.createElement("polyline", {
+      points: "3.29 7 12 12 20.71 7"
+    }), /*#__PURE__*/React.createElement("line", {
+      x1: "12",
+      y1: "22",
+      x2: "12",
+      y2: "12"
+    })),
+    Plus: /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("line", {
+      x1: "12",
+      y1: "5",
+      x2: "12",
+      y2: "19"
+    }), /*#__PURE__*/React.createElement("line", {
+      x1: "5",
+      y1: "12",
+      x2: "19",
+      y2: "12"
+    })),
+    Check: /*#__PURE__*/React.createElement("polyline", {
+      points: "20 6 9 17 4 12"
+    }),
+    Clock: /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("circle", {
+      cx: "12",
+      cy: "12",
+      r: "10"
+    }), /*#__PURE__*/React.createElement("polyline", {
+      points: "12 6 12 12 16 14"
+    })),
+    CreditCard: /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("rect", {
+      x: "2",
+      y: "5",
+      width: "20",
+      height: "14",
+      rx: "2"
+    }), /*#__PURE__*/React.createElement("line", {
+      x1: "2",
+      y1: "10",
+      x2: "22",
+      y2: "10"
+    })),
+    ChevronLeft: /*#__PURE__*/React.createElement("polyline", {
+      points: "15 18 9 12 15 6"
+    }),
+    ChevronRight: /*#__PURE__*/React.createElement("polyline", {
+      points: "9 18 15 12 9 6"
+    }),
+    Repeat: /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("polyline", {
+      points: "17 1 21 5 17 9"
+    }), /*#__PURE__*/React.createElement("path", {
+      d: "M3 11V9a4 4 0 0 1 4-4h14"
+    }), /*#__PURE__*/React.createElement("polyline", {
+      points: "7 23 3 19 7 15"
+    }), /*#__PURE__*/React.createElement("path", {
+      d: "M21 13v2a4 4 0 0 1-4 4H3"
+    })),
+    Stethoscope: /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("path", {
+      d: "M6 3v5a4 4 0 0 0 8 0V3"
+    }), /*#__PURE__*/React.createElement("path", {
+      d: "M5 3h2M13 3h2"
+    }), /*#__PURE__*/React.createElement("path", {
+      d: "M10 15v1a5 5 0 0 0 5 5 4 4 0 0 0 4-4v-2"
+    }), /*#__PURE__*/React.createElement("circle", {
+      cx: "20",
+      cy: "10",
+      r: "2"
+    })),
+    Sparkles: /*#__PURE__*/React.createElement("path", {
+      d: "M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9Z"
+    }),
+    TrendingUp: /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("polyline", {
+      points: "22 7 13.5 15.5 8.5 10.5 2 17"
+    }), /*#__PURE__*/React.createElement("polyline", {
+      points: "16 7 22 7 22 13"
+    })),
+    User: /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("path", {
+      d: "M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"
+    }), /*#__PURE__*/React.createElement("circle", {
+      cx: "12",
+      cy: "7",
+      r: "4"
+    })),
+    ShieldCheck: /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("path", {
+      d: "M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"
+    }), /*#__PURE__*/React.createElement("polyline", {
+      points: "9 12 11.5 14.5 16 10"
+    }))
   };
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
-      {icons[name]}
-    </svg>
-  );
+  return /*#__PURE__*/React.createElement("svg", {
+    width: size,
+    height: size,
+    viewBox: "0 0 24 24",
+    fill: "none",
+    stroke: "currentColor",
+    strokeWidth: "2",
+    strokeLinecap: "round",
+    strokeLinejoin: "round",
+    className: className
+  }, icons[name]);
 }
 
 // ---------- Datos demo ----------
-const SERVICIOS = [
-  { id: "s1", nombre: "Consulta de seguimiento", dur: "30 min", precio: 800, icon: "Stethoscope" },
-  { id: "s2", nombre: "Valoración estética", dur: "45 min", precio: 600, icon: "Sparkles" },
-  { id: "s3", nombre: "Control post-procedimiento", dur: "20 min", precio: 500, icon: "ShieldCheck" },
-];
-
-const PRODUCTOS_INIT = [
-  { id: "p1", nombre: "Crema regeneradora post-procedimiento", cat: "Cuidado", precio: 950, stock: 24, suscribible: true },
-  { id: "p2", nombre: "Sérum ácido hialurónico", cat: "Cuidado", precio: 1200, stock: 15, suscribible: true },
-  { id: "p3", nombre: "Bloqueador FPS 50+ clínico", cat: "Cuidado", precio: 620, stock: 40, suscribible: true },
-  { id: "p4", nombre: "Suplemento prenatal (30 días)", cat: "Suplemento", precio: 480, stock: 60, suscribible: true },
-  { id: "p5", nombre: "Kit cuidado post-cirugía", cat: "Cuidado", precio: 1850, stock: 6, suscribible: false },
-];
-
+const SERVICIOS = [{
+  id: "s1",
+  nombre: "Consulta de seguimiento",
+  dur: "30 min",
+  precio: 800,
+  icon: "Stethoscope"
+}, {
+  id: "s2",
+  nombre: "Valoración estética",
+  dur: "45 min",
+  precio: 600,
+  icon: "Sparkles"
+}, {
+  id: "s3",
+  nombre: "Control post-procedimiento",
+  dur: "20 min",
+  precio: 500,
+  icon: "ShieldCheck"
+}];
+const PRODUCTOS_INIT = [{
+  id: "p1",
+  nombre: "Crema regeneradora post-procedimiento",
+  cat: "Cuidado",
+  precio: 950,
+  stock: 24,
+  suscribible: true
+}, {
+  id: "p2",
+  nombre: "Sérum ácido hialurónico",
+  cat: "Cuidado",
+  precio: 1200,
+  stock: 15,
+  suscribible: true
+}, {
+  id: "p3",
+  nombre: "Bloqueador FPS 50+ clínico",
+  cat: "Cuidado",
+  precio: 620,
+  stock: 40,
+  suscribible: true
+}, {
+  id: "p4",
+  nombre: "Suplemento prenatal (30 días)",
+  cat: "Suplemento",
+  precio: 480,
+  stock: 60,
+  suscribible: true
+}, {
+  id: "p5",
+  nombre: "Kit cuidado post-cirugía",
+  cat: "Cuidado",
+  precio: 1850,
+  stock: 6,
+  suscribible: false
+}];
 const HORARIOS = ["09:00", "10:00", "11:30", "12:30", "16:00", "17:00", "18:00"];
-const money = (n) => "$" + n.toLocaleString("es-MX");
+const money = n => "$" + n.toLocaleString("es-MX");
 const ESTADOS = {
-  pendiente: { label: "Pago pendiente", color: "bg-amber-100 text-amber-800" },
-  pagado: { label: "Pagado", color: "bg-emerald-100 text-emerald-800" },
-  enviado: { label: "Enviado", color: "bg-sky-100 text-sky-800" },
-  entregado: { label: "Entregado", color: "bg-slate-100 text-slate-600" },
+  pendiente: {
+    label: "Pago pendiente",
+    color: "bg-amber-100 text-amber-800"
+  },
+  pagado: {
+    label: "Pagado",
+    color: "bg-emerald-100 text-emerald-800"
+  },
+  enviado: {
+    label: "Enviado",
+    color: "bg-sky-100 text-sky-800"
+  },
+  entregado: {
+    label: "Entregado",
+    color: "bg-slate-100 text-slate-600"
+  }
 };
-
 function App() {
   const [mode, setMode] = useState("patient");
   const [products, setProducts] = useState(PRODUCTOS_INIT);
-  const [orders, setOrders] = useState([
-    { id: "ORD-1042", paciente: "María G.", items: [{ nombre: "Sérum ácido hialurónico", qty: 1 }], total: 1200, estado: "pagado", sub: false, fecha: "Hoy 10:14" },
-    { id: "ORD-1041", paciente: "Laura M.", items: [{ nombre: "Bloqueador FPS 50+", qty: 2 }], total: 1240, estado: "enviado", sub: true, fecha: "Hoy 09:02" },
-  ]);
-  const [appointments, setAppointments] = useState([
-    { id: "CITA-330", paciente: "Andrea R.", servicio: "Consulta de seguimiento", fecha: "Jue 12 Jul", hora: "11:30" },
-  ]);
-
-  return (
-    <div className="min-h-screen w-full bg-slate-100 flex flex-col items-center py-4 px-2 font-sans">
-      <div className="mb-3 inline-flex rounded-full bg-white p-1 shadow-sm border border-slate-200">
-        <button onClick={() => setMode("patient")} className={"px-4 py-1.5 rounded-full text-sm font-medium transition " + (mode === "patient" ? "bg-teal-700 text-white" : "text-slate-500")}>Vista paciente</button>
-        <button onClick={() => setMode("admin")} className={"px-4 py-1.5 rounded-full text-sm font-medium transition " + (mode === "admin" ? "bg-teal-700 text-white" : "text-slate-500")}>Panel del Dr.</button>
-      </div>
-      {mode === "patient"
-        ? <PatientApp products={products} orders={orders} setOrders={setOrders} appointments={appointments} setAppointments={setAppointments} setProducts={setProducts} />
-        : <AdminApp products={products} orders={orders} setOrders={setOrders} appointments={appointments} />}
-    </div>
-  );
+  const [orders, setOrders] = useState([{
+    id: "ORD-1042",
+    paciente: "María G.",
+    items: [{
+      nombre: "Sérum ácido hialurónico",
+      qty: 1
+    }],
+    total: 1200,
+    estado: "pagado",
+    sub: false,
+    fecha: "Hoy 10:14"
+  }, {
+    id: "ORD-1041",
+    paciente: "Laura M.",
+    items: [{
+      nombre: "Bloqueador FPS 50+",
+      qty: 2
+    }],
+    total: 1240,
+    estado: "enviado",
+    sub: true,
+    fecha: "Hoy 09:02"
+  }]);
+  const [appointments, setAppointments] = useState([{
+    id: "CITA-330",
+    paciente: "Andrea R.",
+    servicio: "Consulta de seguimiento",
+    fecha: "Jue 12 Jul",
+    hora: "11:30"
+  }]);
+  return /*#__PURE__*/React.createElement("div", {
+    className: "min-h-screen w-full bg-slate-100 flex flex-col items-center py-4 px-2 font-sans"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "mb-3 inline-flex rounded-full bg-white p-1 shadow-sm border border-slate-200"
+  }, /*#__PURE__*/React.createElement("button", {
+    onClick: () => setMode("patient"),
+    className: "px-4 py-1.5 rounded-full text-sm font-medium transition " + (mode === "patient" ? "bg-teal-700 text-white" : "text-slate-500")
+  }, "Vista paciente"), /*#__PURE__*/React.createElement("button", {
+    onClick: () => setMode("admin"),
+    className: "px-4 py-1.5 rounded-full text-sm font-medium transition " + (mode === "admin" ? "bg-teal-700 text-white" : "text-slate-500")
+  }, "Panel del Dr.")), mode === "patient" ? /*#__PURE__*/React.createElement(PatientApp, {
+    products: products,
+    orders: orders,
+    setOrders: setOrders,
+    appointments: appointments,
+    setAppointments: setAppointments,
+    setProducts: setProducts
+  }) : /*#__PURE__*/React.createElement(AdminApp, {
+    products: products,
+    orders: orders,
+    setOrders: setOrders,
+    appointments: appointments
+  }));
 }
-
-function PatientApp({ products, orders, setOrders, appointments, setAppointments, setProducts }) {
+function PatientApp({
+  products,
+  orders,
+  setOrders,
+  appointments,
+  setAppointments,
+  setProducts
+}) {
   const [tab, setTab] = useState("inicio");
   const [cart, setCart] = useState([]);
   const [checkout, setCheckout] = useState(false);
   const cartCount = cart.reduce((a, c) => a + c.qty, 0);
-
   const addToCart = (prod, sub = false) => {
-    setCart((c) => {
+    setCart(c => {
       const key = prod.id + (sub ? "-sub" : "");
-      const found = c.find((x) => x.key === key);
-      if (found) return c.map((x) => x.key === key ? { ...x, qty: x.qty + 1 } : x);
-      return [...c, { key, ...prod, sub, qty: 1 }];
+      const found = c.find(x => x.key === key);
+      if (found) return c.map(x => x.key === key ? {
+        ...x,
+        qty: x.qty + 1
+      } : x);
+      return [...c, {
+        key,
+        ...prod,
+        sub,
+        qty: 1
+      }];
     });
   };
   const cartTotal = cart.reduce((a, c) => a + c.precio * c.qty, 0);
-
   const confirmOrder = () => {
-    const nueva = { id: "ORD-" + Math.floor(1043 + Math.random() * 900), paciente: "Tú", items: cart.map((c) => ({ nombre: c.nombre, qty: c.qty })), total: cartTotal, estado: "pagado", sub: cart.some((c) => c.sub), fecha: "Ahora" };
-    setOrders((o) => [nueva, ...o]);
-    setProducts((ps) => ps.map((p) => {
-      const inCart = cart.filter((c) => c.id === p.id).reduce((a, c) => a + c.qty, 0);
-      return inCart ? { ...p, stock: Math.max(0, p.stock - inCart) } : p;
+    const nueva = {
+      id: "ORD-" + Math.floor(1043 + Math.random() * 900),
+      paciente: "Tú",
+      items: cart.map(c => ({
+        nombre: c.nombre,
+        qty: c.qty
+      })),
+      total: cartTotal,
+      estado: "pagado",
+      sub: cart.some(c => c.sub),
+      fecha: "Ahora"
+    };
+    setOrders(o => [nueva, ...o]);
+    setProducts(ps => ps.map(p => {
+      const inCart = cart.filter(c => c.id === p.id).reduce((a, c) => a + c.qty, 0);
+      return inCart ? {
+        ...p,
+        stock: Math.max(0, p.stock - inCart)
+      } : p;
     }));
-    setCart([]); setCheckout(false); setTab("pedidos");
+    setCart([]);
+    setCheckout(false);
+    setTab("pedidos");
   };
-
-  return (
-    <div className="w-full max-w-[420px] bg-white rounded-3xl shadow-xl border border-slate-200 overflow-hidden flex flex-col" style={{ height: "760px" }}>
-      <div className="bg-teal-700 text-white px-5 pt-5 pb-4">
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="text-teal-200 text-xs">Consultorio</p>
-            <p className="font-semibold text-lg leading-tight">Dr. Gabriel Morales</p>
-          </div>
-          <div className="h-10 w-10 rounded-full bg-teal-600 flex items-center justify-center"><Ico name="User" size={20} /></div>
-        </div>
-      </div>
-
-      <div className="flex-1 overflow-y-auto bg-slate-50">
-        {checkout
-          ? <Checkout cart={cart} total={cartTotal} onBack={() => setCheckout(false)} onPay={confirmOrder} />
-          : <>
-              {tab === "inicio" && <Inicio appointments={appointments} products={products} addToCart={addToCart} setTab={setTab} />}
-              {tab === "agendar" && <Agendar onBook={(a) => { setAppointments((x) => [a, ...x]); setTab("pedidos"); }} />}
-              {tab === "tienda" && <Tienda products={products} cart={cart} addToCart={addToCart} cartTotal={cartTotal} cartCount={cartCount} onCheckout={() => setCheckout(true)} />}
-              {tab === "pedidos" && <MisPedidos orders={orders} appointments={appointments} />}
-            </>}
-      </div>
-
-      {!checkout && (
-        <div className="grid grid-cols-4 border-t border-slate-200 bg-white">
-          {[
-            { k: "inicio", label: "Inicio", icon: "Home" },
-            { k: "agendar", label: "Agendar", icon: "Calendar" },
-            { k: "tienda", label: "Tienda", icon: "ShoppingBag", badge: cartCount },
-            { k: "pedidos", label: "Míos", icon: "Package" },
-          ].map(({ k, label, icon, badge }) => (
-            <button key={k} onClick={() => setTab(k)} className={"py-3 flex flex-col items-center gap-0.5 relative " + (tab === k ? "text-teal-700" : "text-slate-400")}>
-              <Ico name={icon} size={22} />
-              {badge > 0 && <span className="absolute top-2 right-6 bg-rose-500 text-white text-[10px] h-4 min-w-4 px-1 rounded-full flex items-center justify-center">{badge}</span>}
-              <span className="text-[11px] font-medium">{label}</span>
-            </button>
-          ))}
-        </div>
-      )}
-    </div>
-  );
+  return /*#__PURE__*/React.createElement("div", {
+    className: "w-full max-w-[420px] bg-white rounded-3xl shadow-xl border border-slate-200 overflow-hidden flex flex-col",
+    style: {
+      height: "760px"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "bg-teal-700 text-white px-5 pt-5 pb-4"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "flex items-center justify-between"
+  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("p", {
+    className: "text-teal-200 text-xs"
+  }, "Consultorio"), /*#__PURE__*/React.createElement("p", {
+    className: "font-semibold text-lg leading-tight"
+  }, "Dr. Gabriel Morales")), /*#__PURE__*/React.createElement("div", {
+    className: "h-10 w-10 rounded-full bg-teal-600 flex items-center justify-center"
+  }, /*#__PURE__*/React.createElement(Ico, {
+    name: "User",
+    size: 20
+  })))), /*#__PURE__*/React.createElement("div", {
+    className: "flex-1 overflow-y-auto bg-slate-50"
+  }, checkout ? /*#__PURE__*/React.createElement(Checkout, {
+    cart: cart,
+    total: cartTotal,
+    onBack: () => setCheckout(false),
+    onPay: confirmOrder
+  }) : /*#__PURE__*/React.createElement(React.Fragment, null, tab === "inicio" && /*#__PURE__*/React.createElement(Inicio, {
+    appointments: appointments,
+    products: products,
+    addToCart: addToCart,
+    setTab: setTab
+  }), tab === "agendar" && /*#__PURE__*/React.createElement(Agendar, {
+    onBook: a => {
+      setAppointments(x => [a, ...x]);
+      setTab("pedidos");
+    }
+  }), tab === "tienda" && /*#__PURE__*/React.createElement(Tienda, {
+    products: products,
+    cart: cart,
+    addToCart: addToCart,
+    cartTotal: cartTotal,
+    cartCount: cartCount,
+    onCheckout: () => setCheckout(true)
+  }), tab === "pedidos" && /*#__PURE__*/React.createElement(MisPedidos, {
+    orders: orders,
+    appointments: appointments
+  }))), !checkout && /*#__PURE__*/React.createElement("div", {
+    className: "grid grid-cols-4 border-t border-slate-200 bg-white"
+  }, [{
+    k: "inicio",
+    label: "Inicio",
+    icon: "Home"
+  }, {
+    k: "agendar",
+    label: "Agendar",
+    icon: "Calendar"
+  }, {
+    k: "tienda",
+    label: "Tienda",
+    icon: "ShoppingBag",
+    badge: cartCount
+  }, {
+    k: "pedidos",
+    label: "Míos",
+    icon: "Package"
+  }].map(({
+    k,
+    label,
+    icon,
+    badge
+  }) => /*#__PURE__*/React.createElement("button", {
+    key: k,
+    onClick: () => setTab(k),
+    className: "py-3 flex flex-col items-center gap-0.5 relative " + (tab === k ? "text-teal-700" : "text-slate-400")
+  }, /*#__PURE__*/React.createElement(Ico, {
+    name: icon,
+    size: 22
+  }), badge > 0 && /*#__PURE__*/React.createElement("span", {
+    className: "absolute top-2 right-6 bg-rose-500 text-white text-[10px] h-4 min-w-4 px-1 rounded-full flex items-center justify-center"
+  }, badge), /*#__PURE__*/React.createElement("span", {
+    className: "text-[11px] font-medium"
+  }, label)))));
 }
-
-function Inicio({ appointments, products, addToCart, setTab }) {
-  const recompra = products.filter((p) => p.suscribible).slice(0, 3);
-  return (
-    <div className="p-4 space-y-4">
-      <h2 className="text-slate-800 font-semibold text-lg">Hola de nuevo 👋</h2>
-      <div className="bg-teal-700 text-white rounded-2xl p-4">
-        <p className="text-teal-200 text-xs mb-1">Tu próxima cita</p>
-        {appointments.length ? (
-          <>
-            <p className="font-semibold">{appointments[0].servicio}</p>
-            <div className="flex items-center gap-2 text-teal-100 text-sm mt-1">
-              <Ico name="Calendar" size={14} /> {appointments[0].fecha} <Ico name="Clock" size={14} /> {appointments[0].hora}
-            </div>
-          </>
-        ) : (
-          <>
-            <p className="text-sm text-teal-100 mb-2">No tienes citas agendadas.</p>
-            <button onClick={() => setTab("agendar")} className="bg-white text-teal-700 text-sm font-medium px-3 py-1.5 rounded-lg">Agendar ahora</button>
-          </>
-        )}
-      </div>
-      <div className="grid grid-cols-2 gap-3">
-        <button onClick={() => setTab("agendar")} className="bg-white border border-slate-200 rounded-2xl p-4 text-left">
-          <Ico name="Calendar" className="text-teal-700 mb-2" size={22} />
-          <p className="font-medium text-slate-800 text-sm">Agendar seguimiento</p>
-        </button>
-        <button onClick={() => setTab("tienda")} className="bg-white border border-slate-200 rounded-2xl p-4 text-left">
-          <Ico name="ShoppingBag" className="text-rose-500 mb-2" size={22} />
-          <p className="font-medium text-slate-800 text-sm">Comprar productos</p>
-        </button>
-      </div>
-      <div>
-        <div className="flex items-center gap-2 mb-2"><Ico name="Repeat" size={16} className="text-teal-700" /><h3 className="font-semibold text-slate-800 text-sm">Vuelve a pedir</h3></div>
-        <div className="space-y-2">
-          {recompra.map((p) => (
-            <div key={p.id} className="bg-white border border-slate-200 rounded-xl p-3 flex items-center justify-between">
-              <div className="pr-2"><p className="text-sm text-slate-800 leading-tight">{p.nombre}</p><p className="text-xs text-slate-500 mt-0.5">{money(p.precio)}</p></div>
-              <button onClick={() => addToCart(p)} className="bg-teal-700 text-white h-8 w-8 rounded-full flex items-center justify-center shrink-0"><Ico name="Plus" size={16} /></button>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
+function Inicio({
+  appointments,
+  products,
+  addToCart,
+  setTab
+}) {
+  const recompra = products.filter(p => p.suscribible).slice(0, 3);
+  return /*#__PURE__*/React.createElement("div", {
+    className: "p-4 space-y-4"
+  }, /*#__PURE__*/React.createElement("h2", {
+    className: "text-slate-800 font-semibold text-lg"
+  }, "Hola de nuevo \uD83D\uDC4B"), /*#__PURE__*/React.createElement("div", {
+    className: "bg-teal-700 text-white rounded-2xl p-4"
+  }, /*#__PURE__*/React.createElement("p", {
+    className: "text-teal-200 text-xs mb-1"
+  }, "Tu pr\xF3xima cita"), appointments.length ? /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("p", {
+    className: "font-semibold"
+  }, appointments[0].servicio), /*#__PURE__*/React.createElement("div", {
+    className: "flex items-center gap-2 text-teal-100 text-sm mt-1"
+  }, /*#__PURE__*/React.createElement(Ico, {
+    name: "Calendar",
+    size: 14
+  }), " ", appointments[0].fecha, " ", /*#__PURE__*/React.createElement(Ico, {
+    name: "Clock",
+    size: 14
+  }), " ", appointments[0].hora)) : /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("p", {
+    className: "text-sm text-teal-100 mb-2"
+  }, "No tienes citas agendadas."), /*#__PURE__*/React.createElement("button", {
+    onClick: () => setTab("agendar"),
+    className: "bg-white text-teal-700 text-sm font-medium px-3 py-1.5 rounded-lg"
+  }, "Agendar ahora"))), /*#__PURE__*/React.createElement("div", {
+    className: "grid grid-cols-2 gap-3"
+  }, /*#__PURE__*/React.createElement("button", {
+    onClick: () => setTab("agendar"),
+    className: "bg-white border border-slate-200 rounded-2xl p-4 text-left"
+  }, /*#__PURE__*/React.createElement(Ico, {
+    name: "Calendar",
+    className: "text-teal-700 mb-2",
+    size: 22
+  }), /*#__PURE__*/React.createElement("p", {
+    className: "font-medium text-slate-800 text-sm"
+  }, "Agendar seguimiento")), /*#__PURE__*/React.createElement("button", {
+    onClick: () => setTab("tienda"),
+    className: "bg-white border border-slate-200 rounded-2xl p-4 text-left"
+  }, /*#__PURE__*/React.createElement(Ico, {
+    name: "ShoppingBag",
+    className: "text-rose-500 mb-2",
+    size: 22
+  }), /*#__PURE__*/React.createElement("p", {
+    className: "font-medium text-slate-800 text-sm"
+  }, "Comprar productos"))), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
+    className: "flex items-center gap-2 mb-2"
+  }, /*#__PURE__*/React.createElement(Ico, {
+    name: "Repeat",
+    size: 16,
+    className: "text-teal-700"
+  }), /*#__PURE__*/React.createElement("h3", {
+    className: "font-semibold text-slate-800 text-sm"
+  }, "Vuelve a pedir")), /*#__PURE__*/React.createElement("div", {
+    className: "space-y-2"
+  }, recompra.map(p => /*#__PURE__*/React.createElement("div", {
+    key: p.id,
+    className: "bg-white border border-slate-200 rounded-xl p-3 flex items-center justify-between"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "pr-2"
+  }, /*#__PURE__*/React.createElement("p", {
+    className: "text-sm text-slate-800 leading-tight"
+  }, p.nombre), /*#__PURE__*/React.createElement("p", {
+    className: "text-xs text-slate-500 mt-0.5"
+  }, money(p.precio))), /*#__PURE__*/React.createElement("button", {
+    onClick: () => addToCart(p),
+    className: "bg-teal-700 text-white h-8 w-8 rounded-full flex items-center justify-center shrink-0"
+  }, /*#__PURE__*/React.createElement(Ico, {
+    name: "Plus",
+    size: 16
+  })))))));
 }
-
-function Agendar({ onBook }) {
+function Agendar({
+  onBook
+}) {
   const [serv, setServ] = useState(null);
   const [dia, setDia] = useState(null);
   const [hora, setHora] = useState(null);
   const dias = ["Lun 14", "Mar 15", "Mié 16", "Jue 17", "Vie 18"];
-  const confirmar = () => onBook({ id: "CITA-" + Math.floor(331 + Math.random() * 500), paciente: "Tú", servicio: serv.nombre, fecha: dia, hora });
-  return (
-    <div className="p-4 space-y-5">
-      <h2 className="text-slate-800 font-semibold text-lg">Agendar cita</h2>
-      <div>
-        <p className="text-sm font-medium text-slate-600 mb-2">1. Tipo de cita</p>
-        <div className="space-y-2">
-          {SERVICIOS.map((s) => {
-            const sel = serv?.id === s.id;
-            return (
-              <button key={s.id} onClick={() => setServ(s)} className={"w-full flex items-center gap-3 p-3 rounded-xl border text-left " + (sel ? "border-teal-700 bg-teal-50" : "border-slate-200 bg-white")}>
-                <div className={"h-9 w-9 rounded-lg flex items-center justify-center " + (sel ? "bg-teal-700 text-white" : "bg-slate-100 text-slate-500")}><Ico name={s.icon} size={18} /></div>
-                <div className="flex-1"><p className="text-sm font-medium text-slate-800">{s.nombre}</p><p className="text-xs text-slate-500">{s.dur} · {money(s.precio)}</p></div>
-                {sel && <Ico name="Check" size={18} className="text-teal-700" />}
-              </button>
-            );
-          })}
-        </div>
-      </div>
-      {serv && (
-        <div>
-          <p className="text-sm font-medium text-slate-600 mb-2">2. Día</p>
-          <div className="flex gap-2 overflow-x-auto pb-1">
-            {dias.map((d) => (
-              <button key={d} onClick={() => setDia(d)} className={"px-3 py-2 rounded-xl text-sm whitespace-nowrap border " + (dia === d ? "bg-teal-700 text-white border-teal-700" : "bg-white text-slate-600 border-slate-200")}>{d}</button>
-            ))}
-          </div>
-        </div>
-      )}
-      {dia && (
-        <div>
-          <p className="text-sm font-medium text-slate-600 mb-2">3. Horario</p>
-          <div className="grid grid-cols-4 gap-2">
-            {HORARIOS.map((h) => (
-              <button key={h} onClick={() => setHora(h)} className={"py-2 rounded-lg text-sm border " + (hora === h ? "bg-teal-700 text-white border-teal-700" : "bg-white text-slate-600 border-slate-200")}>{h}</button>
-            ))}
-          </div>
-        </div>
-      )}
-      {serv && dia && hora && (
-        <button onClick={confirmar} className="w-full bg-teal-700 text-white py-3 rounded-xl font-medium">Confirmar cita · {dia} {hora}</button>
-      )}
-    </div>
-  );
+  const confirmar = () => onBook({
+    id: "CITA-" + Math.floor(331 + Math.random() * 500),
+    paciente: "Tú",
+    servicio: serv.nombre,
+    fecha: dia,
+    hora
+  });
+  return /*#__PURE__*/React.createElement("div", {
+    className: "p-4 space-y-5"
+  }, /*#__PURE__*/React.createElement("h2", {
+    className: "text-slate-800 font-semibold text-lg"
+  }, "Agendar cita"), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("p", {
+    className: "text-sm font-medium text-slate-600 mb-2"
+  }, "1. Tipo de cita"), /*#__PURE__*/React.createElement("div", {
+    className: "space-y-2"
+  }, SERVICIOS.map(s => {
+    const sel = serv?.id === s.id;
+    return /*#__PURE__*/React.createElement("button", {
+      key: s.id,
+      onClick: () => setServ(s),
+      className: "w-full flex items-center gap-3 p-3 rounded-xl border text-left " + (sel ? "border-teal-700 bg-teal-50" : "border-slate-200 bg-white")
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "h-9 w-9 rounded-lg flex items-center justify-center " + (sel ? "bg-teal-700 text-white" : "bg-slate-100 text-slate-500")
+    }, /*#__PURE__*/React.createElement(Ico, {
+      name: s.icon,
+      size: 18
+    })), /*#__PURE__*/React.createElement("div", {
+      className: "flex-1"
+    }, /*#__PURE__*/React.createElement("p", {
+      className: "text-sm font-medium text-slate-800"
+    }, s.nombre), /*#__PURE__*/React.createElement("p", {
+      className: "text-xs text-slate-500"
+    }, s.dur, " \xB7 ", money(s.precio))), sel && /*#__PURE__*/React.createElement(Ico, {
+      name: "Check",
+      size: 18,
+      className: "text-teal-700"
+    }));
+  }))), serv && /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("p", {
+    className: "text-sm font-medium text-slate-600 mb-2"
+  }, "2. D\xEDa"), /*#__PURE__*/React.createElement("div", {
+    className: "flex gap-2 overflow-x-auto pb-1"
+  }, dias.map(d => /*#__PURE__*/React.createElement("button", {
+    key: d,
+    onClick: () => setDia(d),
+    className: "px-3 py-2 rounded-xl text-sm whitespace-nowrap border " + (dia === d ? "bg-teal-700 text-white border-teal-700" : "bg-white text-slate-600 border-slate-200")
+  }, d)))), dia && /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("p", {
+    className: "text-sm font-medium text-slate-600 mb-2"
+  }, "3. Horario"), /*#__PURE__*/React.createElement("div", {
+    className: "grid grid-cols-4 gap-2"
+  }, HORARIOS.map(h => /*#__PURE__*/React.createElement("button", {
+    key: h,
+    onClick: () => setHora(h),
+    className: "py-2 rounded-lg text-sm border " + (hora === h ? "bg-teal-700 text-white border-teal-700" : "bg-white text-slate-600 border-slate-200")
+  }, h)))), serv && dia && hora && /*#__PURE__*/React.createElement("button", {
+    onClick: confirmar,
+    className: "w-full bg-teal-700 text-white py-3 rounded-xl font-medium"
+  }, "Confirmar cita \xB7 ", dia, " ", hora));
 }
-
-function Tienda({ products, cart, addToCart, cartTotal, cartCount, onCheckout }) {
+function Tienda({
+  products,
+  cart,
+  addToCart,
+  cartTotal,
+  cartCount,
+  onCheckout
+}) {
   const [filtro, setFiltro] = useState("Todos");
   const cats = ["Todos", "Cuidado", "Suplemento"];
-  const lista = filtro === "Todos" ? products : products.filter((p) => p.cat === filtro);
-  return (
-    <div className="pb-24">
-      <div className="p-4 pb-2 sticky top-0 bg-slate-50 z-10">
-        <h2 className="text-slate-800 font-semibold text-lg mb-1">Tienda</h2>
-        <p className="text-xs text-slate-400 mb-3">Productos de cuidado y suplementos · sin medicamento de receta</p>
-        <div className="flex gap-2">
-          {cats.map((c) => (
-            <button key={c} onClick={() => setFiltro(c)} className={"px-3 py-1.5 rounded-full text-sm border " + (filtro === c ? "bg-teal-700 text-white border-teal-700" : "bg-white text-slate-500 border-slate-200")}>{c}</button>
-          ))}
-        </div>
-      </div>
-      <div className="px-4 space-y-3">
-        {lista.map((p) => {
-          const enCarrito = cart.filter((c) => c.id === p.id).reduce((a, c) => a + c.qty, 0);
-          const agotado = p.stock === 0;
-          return (
-            <div key={p.id} className="bg-white border border-slate-200 rounded-2xl p-4">
-              <div className="flex justify-between items-start">
-                <div className="pr-3">
-                  <span className="text-[11px] font-medium text-rose-500 uppercase tracking-wide">{p.cat}</span>
-                  <p className="text-sm font-medium text-slate-800 leading-tight mt-0.5">{p.nombre}</p>
-                  <p className="text-teal-700 font-semibold mt-1">{money(p.precio)}</p>
-                  <p className={"text-xs mt-0.5 " + (p.stock < 10 ? "text-amber-600" : "text-slate-400")}>{agotado ? "Agotado" : p.stock + " disponibles"}</p>
-                </div>
-                {!agotado && <button onClick={() => addToCart(p)} className="bg-teal-700 text-white h-9 w-9 rounded-full flex items-center justify-center shrink-0"><Ico name="Plus" size={18} /></button>}
-              </div>
-              {p.suscribible && !agotado && (
-                <button onClick={() => addToCart(p, true)} className="mt-3 w-full flex items-center justify-center gap-1.5 text-xs font-medium text-teal-700 bg-teal-50 py-2 rounded-lg">
-                  <Ico name="Repeat" size={14} /> Suscribir y ahorrar 10% (te llega cada mes)
-                </button>
-              )}
-              {enCarrito > 0 && <div className="mt-2 text-xs text-slate-500 text-right">{enCarrito} en el carrito</div>}
-            </div>
-          );
-        })}
-      </div>
-      {cartCount > 0 && (
-        <div className="fixed bottom-[70px] left-0 right-0 max-w-[420px] mx-auto px-4">
-          <button onClick={onCheckout} className="w-full bg-rose-500 text-white py-3.5 rounded-xl font-medium flex items-center justify-between px-5 shadow-lg">
-            <span>Ver carrito · {cartCount}</span><span>{money(cartTotal)}</span>
-          </button>
-        </div>
-      )}
-    </div>
-  );
+  const lista = filtro === "Todos" ? products : products.filter(p => p.cat === filtro);
+  return /*#__PURE__*/React.createElement("div", {
+    className: "pb-24"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "p-4 pb-2 sticky top-0 bg-slate-50 z-10"
+  }, /*#__PURE__*/React.createElement("h2", {
+    className: "text-slate-800 font-semibold text-lg mb-1"
+  }, "Tienda"), /*#__PURE__*/React.createElement("p", {
+    className: "text-xs text-slate-400 mb-3"
+  }, "Productos de cuidado y suplementos \xB7 sin medicamento de receta"), /*#__PURE__*/React.createElement("div", {
+    className: "flex gap-2"
+  }, cats.map(c => /*#__PURE__*/React.createElement("button", {
+    key: c,
+    onClick: () => setFiltro(c),
+    className: "px-3 py-1.5 rounded-full text-sm border " + (filtro === c ? "bg-teal-700 text-white border-teal-700" : "bg-white text-slate-500 border-slate-200")
+  }, c)))), /*#__PURE__*/React.createElement("div", {
+    className: "px-4 space-y-3"
+  }, lista.map(p => {
+    const enCarrito = cart.filter(c => c.id === p.id).reduce((a, c) => a + c.qty, 0);
+    const agotado = p.stock === 0;
+    return /*#__PURE__*/React.createElement("div", {
+      key: p.id,
+      className: "bg-white border border-slate-200 rounded-2xl p-4"
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "flex justify-between items-start"
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "pr-3"
+    }, /*#__PURE__*/React.createElement("span", {
+      className: "text-[11px] font-medium text-rose-500 uppercase tracking-wide"
+    }, p.cat), /*#__PURE__*/React.createElement("p", {
+      className: "text-sm font-medium text-slate-800 leading-tight mt-0.5"
+    }, p.nombre), /*#__PURE__*/React.createElement("p", {
+      className: "text-teal-700 font-semibold mt-1"
+    }, money(p.precio)), /*#__PURE__*/React.createElement("p", {
+      className: "text-xs mt-0.5 " + (p.stock < 10 ? "text-amber-600" : "text-slate-400")
+    }, agotado ? "Agotado" : p.stock + " disponibles")), !agotado && /*#__PURE__*/React.createElement("button", {
+      onClick: () => addToCart(p),
+      className: "bg-teal-700 text-white h-9 w-9 rounded-full flex items-center justify-center shrink-0"
+    }, /*#__PURE__*/React.createElement(Ico, {
+      name: "Plus",
+      size: 18
+    }))), p.suscribible && !agotado && /*#__PURE__*/React.createElement("button", {
+      onClick: () => addToCart(p, true),
+      className: "mt-3 w-full flex items-center justify-center gap-1.5 text-xs font-medium text-teal-700 bg-teal-50 py-2 rounded-lg"
+    }, /*#__PURE__*/React.createElement(Ico, {
+      name: "Repeat",
+      size: 14
+    }), " Suscribir y ahorrar 10% (te llega cada mes)"), enCarrito > 0 && /*#__PURE__*/React.createElement("div", {
+      className: "mt-2 text-xs text-slate-500 text-right"
+    }, enCarrito, " en el carrito"));
+  })), cartCount > 0 && /*#__PURE__*/React.createElement("div", {
+    className: "fixed bottom-[70px] left-0 right-0 max-w-[420px] mx-auto px-4"
+  }, /*#__PURE__*/React.createElement("button", {
+    onClick: onCheckout,
+    className: "w-full bg-rose-500 text-white py-3.5 rounded-xl font-medium flex items-center justify-between px-5 shadow-lg"
+  }, /*#__PURE__*/React.createElement("span", null, "Ver carrito \xB7 ", cartCount), /*#__PURE__*/React.createElement("span", null, money(cartTotal)))));
 }
-
-function Checkout({ cart, total, onBack, onPay }) {
+function Checkout({
+  cart,
+  total,
+  onBack,
+  onPay
+}) {
   const [pagando, setPagando] = useState(false);
   const [metodo, setMetodo] = useState("tarjeta");
-  const pagar = () => { setPagando(true); setTimeout(onPay, 1400); };
-  return (
-    <div className="p-4 space-y-4">
-      <button onClick={onBack} className="flex items-center gap-1 text-slate-500 text-sm"><Ico name="ChevronLeft" size={18} /> Volver</button>
-      <h2 className="text-slate-800 font-semibold text-lg">Tu pedido</h2>
-      <div className="bg-white border border-slate-200 rounded-2xl divide-y divide-slate-100">
-        {cart.map((c) => (
-          <div key={c.key} className="p-3 flex justify-between items-center">
-            <div>
-              <p className="text-sm text-slate-800">{c.nombre}</p>
-              {c.sub && <span className="text-[11px] text-teal-700 flex items-center gap-1"><Ico name="Repeat" size={11} /> Suscripción mensual</span>}
-              <p className="text-xs text-slate-400">x{c.qty}</p>
-            </div>
-            <p className="text-sm font-medium text-slate-700">{money(c.precio * c.qty)}</p>
-          </div>
-        ))}
-      </div>
-      <div>
-        <p className="text-sm font-medium text-slate-600 mb-2">Método de pago</p>
-        <div className="space-y-2">
-          {[
-            { k: "tarjeta", label: "Tarjeta de crédito/débito", desc: "Visa, MasterCard, Amex" },
-            { k: "oxxo", label: "Efectivo en OXXO", desc: "Recibes ficha de pago" },
-            { k: "msi", label: "Meses sin intereses", desc: "3, 6 o 12 MSI" },
-          ].map((m) => (
-            <button key={m.k} onClick={() => setMetodo(m.k)} className={"w-full flex items-center gap-3 p-3 rounded-xl border text-left " + (metodo === m.k ? "border-teal-700 bg-teal-50" : "border-slate-200 bg-white")}>
-              <Ico name="CreditCard" size={18} className={metodo === m.k ? "text-teal-700" : "text-slate-400"} />
-              <div className="flex-1"><p className="text-sm font-medium text-slate-800">{m.label}</p><p className="text-xs text-slate-500">{m.desc}</p></div>
-              {metodo === m.k && <Ico name="Check" size={16} className="text-teal-700" />}
-            </button>
-          ))}
-        </div>
-      </div>
-      <div className="bg-white border border-slate-200 rounded-2xl p-4 flex justify-between items-center">
-        <span className="text-slate-600">Total</span><span className="text-xl font-semibold text-teal-700">{money(total)}</span>
-      </div>
-      <button onClick={pagar} disabled={pagando} className="w-full bg-teal-700 text-white py-3.5 rounded-xl font-medium flex items-center justify-center gap-2 disabled:opacity-60">
-        {pagando ? "Procesando pago..." : <>Pagar con Stripe <Ico name="ShieldCheck" size={18} /></>}
-      </button>
-      <p className="text-center text-xs text-slate-400">Pago seguro procesado por Stripe · demo</p>
-    </div>
-  );
-}
-
-function MisPedidos({ orders, appointments }) {
-  const mios = orders.filter((o) => o.paciente === "Tú" || o.paciente === "María G.");
-  return (
-    <div className="p-4 space-y-4">
-      <h2 className="text-slate-800 font-semibold text-lg">Mis citas y pedidos</h2>
-      <div>
-        <h3 className="text-sm font-medium text-slate-500 mb-2">Citas</h3>
-        {appointments.length === 0 && <p className="text-sm text-slate-400">Sin citas.</p>}
-        {appointments.map((a) => (
-          <div key={a.id} className="bg-white border border-slate-200 rounded-xl p-3 mb-2 flex items-center gap-3">
-            <div className="h-9 w-9 rounded-lg bg-teal-50 text-teal-700 flex items-center justify-center"><Ico name="Calendar" size={18} /></div>
-            <div><p className="text-sm font-medium text-slate-800">{a.servicio}</p><p className="text-xs text-slate-500">{a.fecha} · {a.hora}</p></div>
-          </div>
-        ))}
-      </div>
-      <div>
-        <h3 className="text-sm font-medium text-slate-500 mb-2">Pedidos</h3>
-        {mios.map((o) => (
-          <div key={o.id} className="bg-white border border-slate-200 rounded-xl p-3 mb-2">
-            <div className="flex justify-between items-center mb-1">
-              <span className="text-xs text-slate-400">{o.id}</span>
-              <span className={"text-[11px] px-2 py-0.5 rounded-full font-medium " + ESTADOS[o.estado].color}>{ESTADOS[o.estado].label}</span>
-            </div>
-            <p className="text-sm text-slate-700">{o.items.map((i) => i.nombre + " x" + i.qty).join(", ")}</p>
-            <p className="text-sm font-semibold text-teal-700 mt-1">{money(o.total)}</p>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function AdminApp({ products, orders, setOrders, appointments }) {
-  const [tab, setTab] = useState("resumen");
-  const ingresos = orders.filter((o) => o.estado !== "pendiente").reduce((a, o) => a + o.total, 0);
-  const subs = orders.filter((o) => o.sub).length;
-  const avanzar = (id) => {
-    const flow = ["pendiente", "pagado", "enviado", "entregado"];
-    setOrders((os) => os.map((o) => { if (o.id !== id) return o; const i = flow.indexOf(o.estado); return { ...o, estado: flow[Math.min(i + 1, flow.length - 1)] }; }));
+  const pagar = () => {
+    setPagando(true);
+    setTimeout(onPay, 1400);
   };
-  return (
-    <div className="w-full max-w-[900px] bg-white rounded-3xl shadow-xl border border-slate-200 overflow-hidden">
-      <div className="bg-slate-900 text-white px-6 py-4 flex items-center justify-between">
-        <div><p className="text-slate-400 text-xs">Panel administrador</p><p className="font-semibold text-lg">Soluciones Médicas Integral</p></div>
-        <div className="flex gap-1 bg-slate-800 rounded-lg p-1">
-          {[["resumen", "Resumen"], ["pedidos", "Pedidos"], ["citas", "Citas"], ["prod", "Productos"]].map(([k, l]) => (
-            <button key={k} onClick={() => setTab(k)} className={"px-3 py-1.5 rounded-md text-sm " + (tab === k ? "bg-teal-600 text-white" : "text-slate-300")}>{l}</button>
-          ))}
-        </div>
-      </div>
-      <div className="p-6 bg-slate-50 min-h-[500px]">
-        {tab === "resumen" && (
-          <div>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-              <KPI icon="TrendingUp" label="Ingresos (demo)" value={money(ingresos)} color="text-emerald-600" />
-              <KPI icon="Package" label="Pedidos" value={orders.length} color="text-teal-600" />
-              <KPI icon="Calendar" label="Citas agendadas" value={appointments.length} color="text-sky-600" />
-              <KPI icon="Repeat" label="Suscripciones" value={subs} color="text-rose-500" />
-            </div>
-            <div className="bg-white border border-slate-200 rounded-2xl p-5">
-              <h3 className="font-semibold text-slate-800 mb-3">Actividad reciente</h3>
-              <div className="space-y-2">
-                {orders.slice(0, 4).map((o) => (
-                  <div key={o.id} className="flex justify-between items-center text-sm border-b border-slate-100 pb-2">
-                    <span className="text-slate-600">{o.fecha} · {o.paciente}</span><span className="font-medium text-slate-800">{money(o.total)}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        )}
-        {tab === "pedidos" && (
-          <div className="bg-white border border-slate-200 rounded-2xl overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead className="bg-slate-100 text-slate-500 text-left"><tr><th className="p-3">Pedido</th><th className="p-3">Paciente</th><th className="p-3">Productos</th><th className="p-3">Total</th><th className="p-3">Estado</th><th className="p-3"></th></tr></thead>
-              <tbody className="divide-y divide-slate-100">
-                {orders.map((o) => (
-                  <tr key={o.id}>
-                    <td className="p-3 text-slate-400">{o.id}</td>
-                    <td className="p-3 font-medium text-slate-700">{o.paciente}</td>
-                    <td className="p-3 text-slate-600">{o.items.map((i) => i.nombre + " x" + i.qty).join(", ")}</td>
-                    <td className="p-3 font-medium">{money(o.total)}</td>
-                    <td className="p-3"><span className={"text-[11px] px-2 py-1 rounded-full font-medium " + ESTADOS[o.estado].color}>{ESTADOS[o.estado].label}</span></td>
-                    <td className="p-3">{o.estado !== "entregado" && <button onClick={() => avanzar(o.id)} className="text-teal-700 text-xs font-medium flex items-center gap-1">Avanzar <Ico name="ChevronRight" size={14} /></button>}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-        {tab === "citas" && (
-          <div className="bg-white border border-slate-200 rounded-2xl p-5 space-y-2">
-            {appointments.map((a) => (
-              <div key={a.id} className="flex items-center justify-between border-b border-slate-100 pb-2">
-                <div className="flex items-center gap-3">
-                  <div className="h-9 w-9 rounded-lg bg-teal-50 text-teal-700 flex items-center justify-center"><Ico name="Calendar" size={18} /></div>
-                  <div><p className="text-sm font-medium text-slate-800">{a.paciente} · {a.servicio}</p><p className="text-xs text-slate-500">{a.fecha} · {a.hora}</p></div>
-                </div>
-                <span className="text-xs text-slate-400">{a.id}</span>
-              </div>
-            ))}
-          </div>
-        )}
-        {tab === "prod" && (
-          <div className="bg-white border border-slate-200 rounded-2xl overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead className="bg-slate-100 text-slate-500 text-left"><tr><th className="p-3">Producto</th><th className="p-3">Categoría</th><th className="p-3">Precio</th><th className="p-3">Stock</th></tr></thead>
-              <tbody className="divide-y divide-slate-100">
-                {products.map((p) => (
-                  <tr key={p.id}><td className="p-3 font-medium text-slate-700">{p.nombre}</td><td className="p-3 text-slate-500">{p.cat}</td><td className="p-3">{money(p.precio)}</td><td className="p-3"><span className={p.stock < 10 ? "text-amber-600 font-medium" : "text-slate-600"}>{p.stock}</span></td></tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </div>
-    </div>
-  );
+  return /*#__PURE__*/React.createElement("div", {
+    className: "p-4 space-y-4"
+  }, /*#__PURE__*/React.createElement("button", {
+    onClick: onBack,
+    className: "flex items-center gap-1 text-slate-500 text-sm"
+  }, /*#__PURE__*/React.createElement(Ico, {
+    name: "ChevronLeft",
+    size: 18
+  }), " Volver"), /*#__PURE__*/React.createElement("h2", {
+    className: "text-slate-800 font-semibold text-lg"
+  }, "Tu pedido"), /*#__PURE__*/React.createElement("div", {
+    className: "bg-white border border-slate-200 rounded-2xl divide-y divide-slate-100"
+  }, cart.map(c => /*#__PURE__*/React.createElement("div", {
+    key: c.key,
+    className: "p-3 flex justify-between items-center"
+  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("p", {
+    className: "text-sm text-slate-800"
+  }, c.nombre), c.sub && /*#__PURE__*/React.createElement("span", {
+    className: "text-[11px] text-teal-700 flex items-center gap-1"
+  }, /*#__PURE__*/React.createElement(Ico, {
+    name: "Repeat",
+    size: 11
+  }), " Suscripci\xF3n mensual"), /*#__PURE__*/React.createElement("p", {
+    className: "text-xs text-slate-400"
+  }, "x", c.qty)), /*#__PURE__*/React.createElement("p", {
+    className: "text-sm font-medium text-slate-700"
+  }, money(c.precio * c.qty))))), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("p", {
+    className: "text-sm font-medium text-slate-600 mb-2"
+  }, "M\xE9todo de pago"), /*#__PURE__*/React.createElement("div", {
+    className: "space-y-2"
+  }, [{
+    k: "tarjeta",
+    label: "Tarjeta de crédito/débito",
+    desc: "Visa, MasterCard, Amex"
+  }, {
+    k: "oxxo",
+    label: "Efectivo en OXXO",
+    desc: "Recibes ficha de pago"
+  }, {
+    k: "msi",
+    label: "Meses sin intereses",
+    desc: "3, 6 o 12 MSI"
+  }].map(m => /*#__PURE__*/React.createElement("button", {
+    key: m.k,
+    onClick: () => setMetodo(m.k),
+    className: "w-full flex items-center gap-3 p-3 rounded-xl border text-left " + (metodo === m.k ? "border-teal-700 bg-teal-50" : "border-slate-200 bg-white")
+  }, /*#__PURE__*/React.createElement(Ico, {
+    name: "CreditCard",
+    size: 18,
+    className: metodo === m.k ? "text-teal-700" : "text-slate-400"
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "flex-1"
+  }, /*#__PURE__*/React.createElement("p", {
+    className: "text-sm font-medium text-slate-800"
+  }, m.label), /*#__PURE__*/React.createElement("p", {
+    className: "text-xs text-slate-500"
+  }, m.desc)), metodo === m.k && /*#__PURE__*/React.createElement(Ico, {
+    name: "Check",
+    size: 16,
+    className: "text-teal-700"
+  }))))), /*#__PURE__*/React.createElement("div", {
+    className: "bg-white border border-slate-200 rounded-2xl p-4 flex justify-between items-center"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "text-slate-600"
+  }, "Total"), /*#__PURE__*/React.createElement("span", {
+    className: "text-xl font-semibold text-teal-700"
+  }, money(total))), /*#__PURE__*/React.createElement("button", {
+    onClick: pagar,
+    disabled: pagando,
+    className: "w-full bg-teal-700 text-white py-3.5 rounded-xl font-medium flex items-center justify-center gap-2 disabled:opacity-60"
+  }, pagando ? "Procesando pago..." : /*#__PURE__*/React.createElement(React.Fragment, null, "Pagar con Stripe ", /*#__PURE__*/React.createElement(Ico, {
+    name: "ShieldCheck",
+    size: 18
+  }))), /*#__PURE__*/React.createElement("p", {
+    className: "text-center text-xs text-slate-400"
+  }, "Pago seguro procesado por Stripe \xB7 demo"));
 }
-
-function KPI({ icon, label, value, color }) {
-  return (
-    <div className="bg-white border border-slate-200 rounded-2xl p-4">
-      <Ico name={icon} className={color + " mb-2"} size={22} />
-      <p className="text-2xl font-semibold text-slate-800">{value}</p>
-      <p className="text-xs text-slate-500">{label}</p>
-    </div>
-  );
+function MisPedidos({
+  orders,
+  appointments
+}) {
+  const mios = orders.filter(o => o.paciente === "Tú" || o.paciente === "María G.");
+  return /*#__PURE__*/React.createElement("div", {
+    className: "p-4 space-y-4"
+  }, /*#__PURE__*/React.createElement("h2", {
+    className: "text-slate-800 font-semibold text-lg"
+  }, "Mis citas y pedidos"), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("h3", {
+    className: "text-sm font-medium text-slate-500 mb-2"
+  }, "Citas"), appointments.length === 0 && /*#__PURE__*/React.createElement("p", {
+    className: "text-sm text-slate-400"
+  }, "Sin citas."), appointments.map(a => /*#__PURE__*/React.createElement("div", {
+    key: a.id,
+    className: "bg-white border border-slate-200 rounded-xl p-3 mb-2 flex items-center gap-3"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "h-9 w-9 rounded-lg bg-teal-50 text-teal-700 flex items-center justify-center"
+  }, /*#__PURE__*/React.createElement(Ico, {
+    name: "Calendar",
+    size: 18
+  })), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("p", {
+    className: "text-sm font-medium text-slate-800"
+  }, a.servicio), /*#__PURE__*/React.createElement("p", {
+    className: "text-xs text-slate-500"
+  }, a.fecha, " \xB7 ", a.hora))))), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("h3", {
+    className: "text-sm font-medium text-slate-500 mb-2"
+  }, "Pedidos"), mios.map(o => /*#__PURE__*/React.createElement("div", {
+    key: o.id,
+    className: "bg-white border border-slate-200 rounded-xl p-3 mb-2"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "flex justify-between items-center mb-1"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "text-xs text-slate-400"
+  }, o.id), /*#__PURE__*/React.createElement("span", {
+    className: "text-[11px] px-2 py-0.5 rounded-full font-medium " + ESTADOS[o.estado].color
+  }, ESTADOS[o.estado].label)), /*#__PURE__*/React.createElement("p", {
+    className: "text-sm text-slate-700"
+  }, o.items.map(i => i.nombre + " x" + i.qty).join(", ")), /*#__PURE__*/React.createElement("p", {
+    className: "text-sm font-semibold text-teal-700 mt-1"
+  }, money(o.total))))));
 }
-
-ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+function AdminApp({
+  products,
+  orders,
+  setOrders,
+  appointments
+}) {
+  const [tab, setTab] = useState("resumen");
+  const ingresos = orders.filter(o => o.estado !== "pendiente").reduce((a, o) => a + o.total, 0);
+  const subs = orders.filter(o => o.sub).length;
+  const avanzar = id => {
+    const flow = ["pendiente", "pagado", "enviado", "entregado"];
+    setOrders(os => os.map(o => {
+      if (o.id !== id) return o;
+      const i = flow.indexOf(o.estado);
+      return {
+        ...o,
+        estado: flow[Math.min(i + 1, flow.length - 1)]
+      };
+    }));
+  };
+  return /*#__PURE__*/React.createElement("div", {
+    className: "w-full max-w-[900px] bg-white rounded-3xl shadow-xl border border-slate-200 overflow-hidden"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "bg-slate-900 text-white px-6 py-4 flex items-center justify-between"
+  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("p", {
+    className: "text-slate-400 text-xs"
+  }, "Panel administrador"), /*#__PURE__*/React.createElement("p", {
+    className: "font-semibold text-lg"
+  }, "Soluciones M\xE9dicas Integral")), /*#__PURE__*/React.createElement("div", {
+    className: "flex gap-1 bg-slate-800 rounded-lg p-1"
+  }, [["resumen", "Resumen"], ["pedidos", "Pedidos"], ["citas", "Citas"], ["prod", "Productos"]].map(([k, l]) => /*#__PURE__*/React.createElement("button", {
+    key: k,
+    onClick: () => setTab(k),
+    className: "px-3 py-1.5 rounded-md text-sm " + (tab === k ? "bg-teal-600 text-white" : "text-slate-300")
+  }, l)))), /*#__PURE__*/React.createElement("div", {
+    className: "p-6 bg-slate-50 min-h-[500px]"
+  }, tab === "resumen" && /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
+    className: "grid grid-cols-2 md:grid-cols-4 gap-4 mb-6"
+  }, /*#__PURE__*/React.createElement(KPI, {
+    icon: "TrendingUp",
+    label: "Ingresos (demo)",
+    value: money(ingresos),
+    color: "text-emerald-600"
+  }), /*#__PURE__*/React.createElement(KPI, {
+    icon: "Package",
+    label: "Pedidos",
+    value: orders.length,
+    color: "text-teal-600"
+  }), /*#__PURE__*/React.createElement(KPI, {
+    icon: "Calendar",
+    label: "Citas agendadas",
+    value: appointments.length,
+    color: "text-sky-600"
+  }), /*#__PURE__*/React.createElement(KPI, {
+    icon: "Repeat",
+    label: "Suscripciones",
+    value: subs,
+    color: "text-rose-500"
+  })), /*#__PURE__*/React.createElement("div", {
+    className: "bg-white border border-slate-200 rounded-2xl p-5"
+  }, /*#__PURE__*/React.createElement("h3", {
+    className: "font-semibold text-slate-800 mb-3"
+  }, "Actividad reciente"), /*#__PURE__*/React.createElement("div", {
+    className: "space-y-2"
+  }, orders.slice(0, 4).map(o => /*#__PURE__*/React.createElement("div", {
+    key: o.id,
+    className: "flex justify-between items-center text-sm border-b border-slate-100 pb-2"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "text-slate-600"
+  }, o.fecha, " \xB7 ", o.paciente), /*#__PURE__*/React.createElement("span", {
+    className: "font-medium text-slate-800"
+  }, money(o.total))))))), tab === "pedidos" && /*#__PURE__*/React.createElement("div", {
+    className: "bg-white border border-slate-200 rounded-2xl overflow-x-auto"
+  }, /*#__PURE__*/React.createElement("table", {
+    className: "w-full text-sm"
+  }, /*#__PURE__*/React.createElement("thead", {
+    className: "bg-slate-100 text-slate-500 text-left"
+  }, /*#__PURE__*/React.createElement("tr", null, /*#__PURE__*/React.createElement("th", {
+    className: "p-3"
+  }, "Pedido"), /*#__PURE__*/React.createElement("th", {
+    className: "p-3"
+  }, "Paciente"), /*#__PURE__*/React.createElement("th", {
+    className: "p-3"
+  }, "Productos"), /*#__PURE__*/React.createElement("th", {
+    className: "p-3"
+  }, "Total"), /*#__PURE__*/React.createElement("th", {
+    className: "p-3"
+  }, "Estado"), /*#__PURE__*/React.createElement("th", {
+    className: "p-3"
+  }))), /*#__PURE__*/React.createElement("tbody", {
+    className: "divide-y divide-slate-100"
+  }, orders.map(o => /*#__PURE__*/React.createElement("tr", {
+    key: o.id
+  }, /*#__PURE__*/React.createElement("td", {
+    className: "p-3 text-slate-400"
+  }, o.id), /*#__PURE__*/React.createElement("td", {
+    className: "p-3 font-medium text-slate-700"
+  }, o.paciente), /*#__PURE__*/React.createElement("td", {
+    className: "p-3 text-slate-600"
+  }, o.items.map(i => i.nombre + " x" + i.qty).join(", ")), /*#__PURE__*/React.createElement("td", {
+    className: "p-3 font-medium"
+  }, money(o.total)), /*#__PURE__*/React.createElement("td", {
+    className: "p-3"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "text-[11px] px-2 py-1 rounded-full font-medium " + ESTADOS[o.estado].color
+  }, ESTADOS[o.estado].label)), /*#__PURE__*/React.createElement("td", {
+    className: "p-3"
+  }, o.estado !== "entregado" && /*#__PURE__*/React.createElement("button", {
+    onClick: () => avanzar(o.id),
+    className: "text-teal-700 text-xs font-medium flex items-center gap-1"
+  }, "Avanzar ", /*#__PURE__*/React.createElement(Ico, {
+    name: "ChevronRight",
+    size: 14
+  })))))))), tab === "citas" && /*#__PURE__*/React.createElement("div", {
+    className: "bg-white border border-slate-200 rounded-2xl p-5 space-y-2"
+  }, appointments.map(a => /*#__PURE__*/React.createElement("div", {
+    key: a.id,
+    className: "flex items-center justify-between border-b border-slate-100 pb-2"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "flex items-center gap-3"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "h-9 w-9 rounded-lg bg-teal-50 text-teal-700 flex items-center justify-center"
+  }, /*#__PURE__*/React.createElement(Ico, {
+    name: "Calendar",
+    size: 18
+  })), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("p", {
+    className: "text-sm font-medium text-slate-800"
+  }, a.paciente, " \xB7 ", a.servicio), /*#__PURE__*/React.createElement("p", {
+    className: "text-xs text-slate-500"
+  }, a.fecha, " \xB7 ", a.hora))), /*#__PURE__*/React.createElement("span", {
+    className: "text-xs text-slate-400"
+  }, a.id)))), tab === "prod" && /*#__PURE__*/React.createElement("div", {
+    className: "bg-white border border-slate-200 rounded-2xl overflow-x-auto"
+  }, /*#__PURE__*/React.createElement("table", {
+    className: "w-full text-sm"
+  }, /*#__PURE__*/React.createElement("thead", {
+    className: "bg-slate-100 text-slate-500 text-left"
+  }, /*#__PURE__*/React.createElement("tr", null, /*#__PURE__*/React.createElement("th", {
+    className: "p-3"
+  }, "Producto"), /*#__PURE__*/React.createElement("th", {
+    className: "p-3"
+  }, "Categor\xEDa"), /*#__PURE__*/React.createElement("th", {
+    className: "p-3"
+  }, "Precio"), /*#__PURE__*/React.createElement("th", {
+    className: "p-3"
+  }, "Stock"))), /*#__PURE__*/React.createElement("tbody", {
+    className: "divide-y divide-slate-100"
+  }, products.map(p => /*#__PURE__*/React.createElement("tr", {
+    key: p.id
+  }, /*#__PURE__*/React.createElement("td", {
+    className: "p-3 font-medium text-slate-700"
+  }, p.nombre), /*#__PURE__*/React.createElement("td", {
+    className: "p-3 text-slate-500"
+  }, p.cat), /*#__PURE__*/React.createElement("td", {
+    className: "p-3"
+  }, money(p.precio)), /*#__PURE__*/React.createElement("td", {
+    className: "p-3"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: p.stock < 10 ? "text-amber-600 font-medium" : "text-slate-600"
+  }, p.stock)))))))));
+}
+function KPI({
+  icon,
+  label,
+  value,
+  color
+}) {
+  return /*#__PURE__*/React.createElement("div", {
+    className: "bg-white border border-slate-200 rounded-2xl p-4"
+  }, /*#__PURE__*/React.createElement(Ico, {
+    name: icon,
+    className: color + " mb-2",
+    size: 22
+  }), /*#__PURE__*/React.createElement("p", {
+    className: "text-2xl font-semibold text-slate-800"
+  }, value), /*#__PURE__*/React.createElement("p", {
+    className: "text-xs text-slate-500"
+  }, label));
+}
+ReactDOM.createRoot(document.getElementById("root")).render(/*#__PURE__*/React.createElement(App, null));
 </script>
 </body>
 </html>
