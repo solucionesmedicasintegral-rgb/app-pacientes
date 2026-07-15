@@ -188,7 +188,20 @@ const[horasLibres,setHorasLibres]=useState([]);
 const[cargando,setCargando]=useState(false);
 const[sinConexion,setSinConexion]=useState(false);
 const hoy=new Date();
-const dias=Array.from({length:5},(_,i)=>{const d=new Date(hoy);d.setDate(d.getDate()+i+1);while(d.getDay()===0||d.getDay()===6)d.setDate(d.getDate()+1);const dn=["Dom","Lun","Mar","Mié","Jue","Vie","Sáb"];const mn=["Ene","Feb","Mar","Abr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dic"];return{label:dn[d.getDay()]+" "+d.getDate()+" "+mn[d.getMonth()],iso:d.toISOString().split("T")[0]}});
+const[mesVista,setMesVista]=useState(hoy.getMonth());
+const[anioVista,setAnioVista]=useState(hoy.getFullYear());
+const mesesNombres=["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
+const diasSemana=["D","L","M","X","J","V","S"];
+const primerDia=new Date(anioVista,mesVista,1).getDay();
+const totalDias=new Date(anioVista,mesVista+1,0).getDate();
+const celdas=[];
+for(let i=0;i<primerDia;i++)celdas.push(null);
+for(let d=1;d<=totalDias;d++)celdas.push(d);
+const esPasado=(d)=>{if(!d)return true;const f=new Date(anioVista,mesVista,d);return f<=hoy};
+const esFinDeSemana=(d)=>{if(!d)return false;const f=new Date(anioVista,mesVista,d);return f.getDay()===0||f.getDay()===6};
+const diaISO=(d)=>{const f=new Date(anioVista,mesVista,d);return f.toISOString().split("T")[0]};
+const diaLabel=(d)=>{const f=new Date(anioVista,mesVista,d);const dn=["Dom","Lun","Mar","Mié","Jue","Vie","Sáb"];const mn=["Ene","Feb","Mar","Abr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dic"];return dn[f.getDay()]+" "+d+" "+mn[f.getMonth()]};
+const cambiarMes=(delta)=>{let nm=mesVista+delta;let na=anioVista;if(nm>11){nm=0;na++}if(nm<0){nm=11;na--}setMesVista(nm);setAnioVista(na);setDia(null);setHora(null);setHorasLibres([])};
 const seleccionarDia=async(d)=>{setDia(d);setHora(null);setHorasLibres([]);setSinConexion(false);
 if(config?.webhookUrl){setCargando(true);
 try{const r=await fetch(config.webhookUrl,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({action:"consultar_disponibilidad",fecha:d.iso})});
@@ -200,7 +213,22 @@ return h("div",{className:"p-4 space-y-5 fade-in"},
 h("h2",{className:"text-slate-800 font-semibold text-lg"},"Agendar cita"),
 h("div",null,h("p",{className:"text-sm font-medium text-slate-600 mb-2"},"1. Tipo de consulta"),
 h("div",{className:"space-y-2"},SERVICIOS.map(s=>{const sel=serv?.id===s.id;return h("button",{key:s.id,onClick:()=>setServ(s),className:"w-full flex items-center gap-3 p-3 rounded-xl border text-left transition "+(sel?"border-brand-500 bg-brand-50":"border-slate-200 bg-white hover:border-brand-200")},h("div",{className:"h-9 w-9 rounded-lg flex items-center justify-center "+(sel?"bg-brand-500 text-white":"bg-slate-100 text-slate-500")},h(Ico,{name:s.icon,size:18})),h("div",{className:"flex-1"},h("p",{className:"text-sm font-medium text-slate-800"},s.nombre),h("p",{className:"text-xs text-slate-500"},s.dur," · ",money(s.precio))),sel&&h(Ico,{name:"Check",size:18,className:"text-brand-500"}))}))),
-serv&&h("div",null,h("p",{className:"text-sm font-medium text-slate-600 mb-2"},"2. Día"),h("div",{className:"flex gap-2 overflow-x-auto pb-1"},dias.map(d=>h("button",{key:d.iso,onClick:()=>seleccionarDia(d),className:"px-3 py-2 rounded-xl text-sm whitespace-nowrap border transition "+(dia?.iso===d.iso?"bg-brand-500 text-white border-brand-500":"bg-white text-slate-600 border-slate-200 hover:border-brand-200")},d.label)))),
+serv&&h("div",null,h("p",{className:"text-sm font-medium text-slate-600 mb-2"},"2. Día"),
+h("div",{className:"bg-white border border-brand-100 rounded-2xl p-3"},
+h("div",{className:"flex items-center justify-between mb-3"},
+h("button",{onClick:()=>cambiarMes(-1),className:"text-slate-400 hover:text-brand-500 p-1"},h(Ico,{name:"ChevronLeft",size:18})),
+h("span",{className:"text-sm font-semibold text-slate-800"},mesesNombres[mesVista]," ",anioVista),
+h("button",{onClick:()=>cambiarMes(1),className:"text-slate-400 hover:text-brand-500 p-1"},h(Ico,{name:"ChevronRight",size:18}))),
+h("div",{className:"grid grid-cols-7 gap-1 text-center"},
+diasSemana.map(d=>h("div",{key:d,className:"text-[11px] font-medium text-slate-400 py-1"},d)),
+celdas.map((d,i)=>{if(!d)return h("div",{key:"e"+i});
+const pasado=esPasado(d);const finde=esFinDeSemana(d);const disabled=pasado||finde;
+const seleccionado=dia?.iso===diaISO(d);
+return h("button",{key:d,disabled,onClick:()=>seleccionarDia({label:diaLabel(d),iso:diaISO(d)}),
+className:"h-9 w-full rounded-lg text-sm transition "+
+(seleccionado?"bg-brand-500 text-white font-medium":
+disabled?"text-slate-300 cursor-not-allowed":
+"text-slate-700 hover:bg-brand-50 hover:text-brand-600")},d)})))),
 dia&&h("div",null,h("p",{className:"text-sm font-medium text-slate-600 mb-2"},"3. Horario disponible"),
 cargando?h("div",{className:"text-center py-4"},h("p",{className:"text-sm text-brand-500"},"Consultando disponibilidad..."))
 :horasLibres.length===0&&!cargando?h("div",{className:"bg-amber-50 border border-amber-200 rounded-xl p-3"},h("p",{className:"text-sm text-amber-800"},"No hay horarios disponibles este día. Prueba otro día."))
