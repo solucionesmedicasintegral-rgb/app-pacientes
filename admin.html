@@ -138,7 +138,7 @@ h("button",{onClick:logout,className:"text-brand-300 hover:text-white ml-2",titl
 h("div",{className:"bg-white rounded-2xl p-6 shadow-sm border border-brand-100 min-h-[500px]"},
 tab==="resumen"&&h(AResumen,{data,ing,subs}),
 tab==="pedidos"&&h(APedidos,{data,avanzar,setLink,wa,showToast}),
-tab==="citas"&&h(ACitas,{data,wa}),
+tab==="citas"&&h(ACitas,{data,ud,wa,showToast,config}),
 tab==="prod"&&h(AProductos,{data,ud,showToast,config}),
 tab==="config"&&h(AConfig,{config,uc,showToast}))));
 }
@@ -170,10 +170,37 @@ o.estado!=="entregado"&&h("button",{onClick:()=>avanzar(o.id),className:"text-br
 o.telefono&&o.linkPago&&h("button",{onClick:()=>wa(o.telefono,"Hola "+o.paciente+", aquí tienes tu link de pago para tu pedido "+o.id+": "+o.linkPago+" - Dr. Gabriel Morales"),className:"text-green-700 text-sm font-medium flex items-center gap-1 bg-green-50 px-3 py-1.5 rounded-lg hover:bg-green-100"},h(Ico,{name:"Send",size:14})," WhatsApp link"),
 o.telefono&&!o.linkPago&&o.estado==="pendiente"&&h("button",{onClick:()=>wa(o.telefono,"Hola "+o.paciente+", recibí tu pedido "+o.id+" por "+money(o.total)+". En breve te envío tu link de pago. - Dr. Gabriel Morales"),className:"text-green-700 text-sm font-medium flex items-center gap-1 bg-green-50 px-3 py-1.5 rounded-lg hover:bg-green-100"},h(Ico,{name:"Phone",size:14})," Avisar")))));
 }
-function ACitas({data,wa}){
-return h("div",{className:"fade-in"},h("h3",{className:"font-semibold text-slate-800 text-lg mb-3"},"Citas agendadas"),
+function ACitas({data,ud,wa,showToast,config}){
+const[el,setEl]=useState(null);const[lv,setLv]=useState("");
+const ECITA={pendiente_pago:{label:"Pago pendiente",color:"bg-amber-100 text-amber-800"},pagada:{label:"Pagada",color:"bg-emerald-100 text-emerald-800"},confirmada:{label:"Confirmada en Calendar",color:"bg-sky-100 text-sky-800"}};
+const setLinkCita=(id,lk)=>ud(d=>({...d,appointments:d.appointments.map(a=>a.id===id?{...a,linkPago:lk}:a)}));
+const confirmarPago=async(cita)=>{
+ud(d=>({...d,appointments:d.appointments.map(a=>a.id===cita.id?{...a,estadoPago:"pagada"}:a)}));
+if(config?.webhookUrl){try{await fetch(config.webhookUrl,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({action:"confirmar_pago_cita",cita})})}catch(e){}}
+showToast("Pago confirmado. Cita creada en Calendar.");
+ud(d=>({...d,appointments:d.appointments.map(a=>a.id===cita.id?{...a,estadoPago:"confirmada"}:a)}));
+};
+return h("div",{className:"space-y-3 fade-in"},h("h3",{className:"font-semibold text-slate-800 text-lg mb-1"},"Citas agendadas"),
 data.appointments.length===0&&h("p",{className:"text-sm text-slate-400"},"Sin citas."),
-data.appointments.map(a=>h("div",{key:a.id,className:"flex items-center justify-between border-b border-slate-100 py-3"},h("div",{className:"flex items-center gap-3"},h("div",{className:"h-9 w-9 rounded-lg bg-brand-50 text-brand-500 flex items-center justify-center"},h(Ico,{name:"Calendar",size:18})),h("div",null,h("p",{className:"text-sm font-medium text-slate-800"},a.paciente," · ",a.servicio),h("p",{className:"text-xs text-slate-500"},a.fecha," · ",a.hora))),h("div",{className:"flex items-center gap-2"},h("span",{className:"text-sm font-medium text-brand-500"},money(a.precio||0)),a.telefono&&h("button",{onClick:()=>wa(a.telefono,"Hola "+a.paciente+", le confirmo su cita de "+a.servicio+" el "+a.fecha+" a las "+a.hora+". - Dr. Gabriel Morales"),className:"text-green-600 hover:text-green-700"},h(Ico,{name:"Send",size:16}))))));
+data.appointments.map(a=>{
+const estado=a.estadoPago||"pendiente_pago";
+const ei=ECITA[estado]||ECITA.pendiente_pago;
+return h("div",{key:a.id,className:"bg-slate-50 border border-brand-100 rounded-2xl p-4"},
+h("div",{className:"flex justify-between items-start mb-2"},
+h("div",null,
+h("div",{className:"flex items-center gap-2"},h("span",{className:"text-xs text-slate-400"},a.id),h("span",{className:"text-[11px] px-2 py-0.5 rounded-full font-medium "+ei.color},ei.label)),
+h("p",{className:"font-medium text-slate-800 mt-1"},a.paciente),
+a.telefono&&h("p",{className:"text-xs text-slate-500"},"📱 ",a.telefono),
+h("p",{className:"text-xs text-slate-500"},a.servicio," · ",a.fecha," · ",a.hora)),
+h("span",{className:"text-lg font-semibold text-brand-500"},money(a.precio||0))),
+h("div",{className:"bg-white rounded-xl p-3 mb-3"},h("p",{className:"text-xs font-medium text-slate-500 mb-1.5"},"🔗 Link de pago Getnet"),
+a.linkPago&&el!==a.id?h("div",{className:"flex items-center gap-2"},h("a",{href:a.linkPago,target:"_blank",className:"text-sm text-brand-500 underline truncate flex-1"},a.linkPago),h("button",{onClick:()=>{setEl(a.id);setLv(a.linkPago)},className:"text-slate-400 hover:text-slate-600"},h(Ico,{name:"Settings",size:14})))
+:el===a.id?h("div",{className:"flex gap-2"},h("input",{value:lv,onChange:e=>setLv(e.target.value),placeholder:"Link de pago Getnet...",className:"flex-1 border border-slate-200 rounded-lg px-3 py-1.5 text-sm"}),h("button",{onClick:()=>{setLinkCita(a.id,lv);setEl(null);showToast("Link guardado")},className:"bg-brand-500 text-white px-3 py-1.5 rounded-lg text-sm"},h(Ico,{name:"Check",size:14})),h("button",{onClick:()=>setEl(null),className:"text-slate-400"},h(Ico,{name:"X",size:14})))
+:h("button",{onClick:()=>{setEl(a.id);setLv("")},className:"text-sm text-brand-500 font-medium"},"+ Agregar link")),
+h("div",{className:"flex gap-2 flex-wrap"},
+estado==="pendiente_pago"&&a.linkPago&&h("button",{onClick:()=>confirmarPago(a),className:"text-emerald-700 text-sm font-medium flex items-center gap-1 bg-emerald-50 px-3 py-1.5 rounded-lg hover:bg-emerald-100"},h(Ico,{name:"Check",size:14})," Confirmar pago"),
+a.telefono&&a.linkPago&&estado==="pendiente_pago"&&h("button",{onClick:()=>wa(a.telefono,"Hola "+a.paciente+", para confirmar tu cita de "+a.servicio+" el "+a.fecha+" a las "+a.hora+", realiza tu pago aquí: "+a.linkPago+" - Dr. Gabriel Morales"),className:"text-green-700 text-sm font-medium flex items-center gap-1 bg-green-50 px-3 py-1.5 rounded-lg hover:bg-green-100"},h(Ico,{name:"Send",size:14})," Enviar link por WhatsApp"),
+a.telefono&&!a.linkPago&&h("button",{onClick:()=>wa(a.telefono,"Hola "+a.paciente+", recibimos tu solicitud de cita de "+a.servicio+" el "+a.fecha+" a las "+a.hora+" por "+money(a.precio||0)+". En breve te envío tu link de pago. - Dr. Gabriel Morales"),className:"text-green-700 text-sm font-medium flex items-center gap-1 bg-green-50 px-3 py-1.5 rounded-lg hover:bg-green-100"},h(Ico,{name:"Phone",size:14})," Avisar por WhatsApp")))}));
 }
 function AProductos({data,ud,showToast,config}){
 const[modo,setModo]=useState("lista");
