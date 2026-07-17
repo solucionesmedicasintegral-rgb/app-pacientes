@@ -89,7 +89,7 @@ return{orders:[],appointments:[],products:[
 {id:"p5",nombre:"Kit cuidado post-cirugía",cat:"Cuidado",precio:1850,stock:6,suscribible:false}
 ]}}
 function sv(d){try{localStorage.setItem(LS,JSON.stringify(d))}catch(e){}}
-function lc(){try{return JSON.parse(localStorage.getItem(LS_C))||{}}catch(e){return{}}}
+function lc(){try{const c=JSON.parse(localStorage.getItem(LS_C))||{};if(!c.webhookUrl)c.webhookUrl="https://solucionesmedicasintegral.app.n8n.cloud/webhook/app-pacientes";return c}catch(e){return{webhookUrl:"https://solucionesmedicasintegral.app.n8n.cloud/webhook/app-pacientes"}}}
 function sc(c){try{localStorage.setItem(LS_C,JSON.stringify(c))}catch(e){}}
 async function wh(cfg,action,payload){if(!cfg.webhookUrl)return{ok:false};try{const r=await fetch(cfg.webhookUrl,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({action,...payload})});if(r.ok)return{ok:true,data:await r.json().catch(()=>({}))};return{ok:false}}catch(e){return{ok:false}}}
 function Toast({msg,type}){if(!msg)return null;return h("div",{className:"toast-anim fixed top-4 left-1/2 -translate-x-1/2 z-50 "+(type==="warn"?"bg-amber-600":"bg-brand-500")+" text-white px-5 py-2.5 rounded-xl shadow-lg text-sm font-medium"},msg)}
