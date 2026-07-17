@@ -106,7 +106,7 @@ checkout?h(Checkout,{cart:cart,total:ct,onBack:function(){setCheckout(false)},on
 :tab==="inicio"?h(Inicio,{data:data,addToCart:addToCart,setTab:setTab,paciente:paciente,cerrarSesion:cerrarSesion})
 :tab==="agendar"?h(Agendar,{onBook:bookAppt,config:config,paciente:paciente})
 :tab==="tienda"?h(Tienda,{products:data.products,cart:cart,addToCart:addToCart,ct:ct,cc:cc,onCheckout:function(){setCheckout(true)}})
-:tab==="pedidos"?h(MisPedidos,{data:data}):null),
+:tab==="pedidos"?h(MisPedidos,{data:data,ud:ud,config:config}):null),
 !checkout&&tab!=="pago_pendiente"&&h("div",{className:"grid grid-cols-4 border-t border-brand-100 bg-white"},
 ["inicio","agendar","tienda","pedidos"].map(function(k,i){var icons=["Home","Calendar","ShoppingBag","Package"];var labels=["Inicio","Agendar","Tienda","Míos"];return h("button",{key:k,onClick:function(){setTab(k)},className:"py-3 flex flex-col items-center gap-0.5 transition "+(tab===k?"text-brand-500":"text-slate-400")},h(Ico,{name:icons[i],size:22}),k==="tienda"&&cc>0&&h("span",{className:"absolute bg-accent-500 text-white text-[10px] h-4 min-w-4 px-1 rounded-full flex items-center justify-center",style:{marginTop:"-28px",marginLeft:"12px"}},cc),h("span",{className:"text-[11px] font-medium"},labels[i]))}))));
 }
@@ -183,10 +183,41 @@ return h("div",{className:"p-5 fade-in"},h("div",{className:"text-center mb-6"},
 }
 
 function MisPedidos(props){
-var data=props.data;
+var data=props.data,ud=props.ud,config=props.config;
 var ECITA={pendiente_pago:{l:"Pago pendiente",c:"bg-amber-100 text-amber-800"},pagada:{l:"Pagada",c:"bg-emerald-100 text-emerald-800"},confirmada:{l:"Confirmada",c:"bg-sky-100 text-sky-800"}};
+var _r=useState(null),reagendarId=_r[0],setReagendarId=_r[1];
+var _d=useState(null),nuevoDia=_d[0],setNuevoDia=_d[1];
+var _h=useState(null),nuevaHora=_h[0],setNuevaHora=_h[1];
+var _hl=useState([]),horasLibres=_hl[0],setHorasLibres=_hl[1];
+var _cg=useState(false),cargando=_cg[0],setCargando=_cg[1];
+var hoy=new Date();
+var _mv=useState(hoy.getMonth()),mesVista=_mv[0],setMesVista=_mv[1];
+var _av=useState(hoy.getFullYear()),anioVista=_av[0],setAnioVista=_av[1];
+var meses=["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
+var ds=["D","L","M","X","J","V","S"];
+var primerDia=new Date(anioVista,mesVista,1).getDay();
+var totalDias=new Date(anioVista,mesVista+1,0).getDate();
+var celdas=[];for(var i=0;i<primerDia;i++)celdas.push(null);for(var d=1;d<=totalDias;d++)celdas.push(d);
+var esPasado=function(d){if(!d)return true;return new Date(anioVista,mesVista,d)<=hoy};
+var esDomingo=function(d){return d&&new Date(anioVista,mesVista,d).getDay()===0};
+var sabRef=new Date(2026,6,25);
+var esSabNoLab=function(d){if(!d)return false;var f=new Date(anioVista,mesVista,d);if(f.getDay()!==6)return false;return Math.round(Math.round((f-sabRef)/(864e5))/7)%2!==0};
+var diaISO=function(d){return new Date(anioVista,mesVista,d).toISOString().split("T")[0]};
+var diaLabel=function(d){var f=new Date(anioVista,mesVista,d);var dn=["Dom","Lun","Mar","Mi\u00e9","Jue","Vie","S\u00e1b"];var mn=["Ene","Feb","Mar","Abr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dic"];return dn[f.getDay()]+" "+d+" "+mn[f.getMonth()]};
+var cambiarMes=function(delta){var nm=mesVista+delta,na=anioVista;if(nm>11){nm=0;na++}if(nm<0){nm=11;na--}setMesVista(nm);setAnioVista(na);setNuevoDia(null);setNuevaHora(null);setHorasLibres([])};
+var seleccionarDia=function(d){setNuevoDia(d);setNuevaHora(null);setHorasLibres([]);if(config&&config.webhookUrl){setCargando(true);fetch(config.webhookUrl,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({action:"consultar_disponibilidad",fecha:d.iso})}).then(function(r){return r.json()}).then(function(data){setHorasLibres(data.disponibles||[])}).catch(function(){setHorasLibres(HORARIOS)}).finally(function(){setCargando(false)})}else{setHorasLibres(HORARIOS)}};
+var confirmarReagendar=function(){if(!nuevoDia||!nuevaHora||!reagendarId)return;ud(function(d){return Object.assign({},d,{appointments:d.appointments.map(function(a){if(a.id!==reagendarId)return a;return Object.assign({},a,{fecha:nuevoDia.label,hora:nuevaHora,reagendado:true})})})});wh(config,"reagendar_cita",{citaId:reagendarId,nuevaFecha:nuevoDia.label,nuevaHora:nuevaHora});setReagendarId(null);setNuevoDia(null);setNuevaHora(null)};
+
+if(reagendarId)return h("div",{className:"p-4 space-y-4 fade-in"},
+h("button",{onClick:function(){setReagendarId(null)},className:"flex items-center gap-1 text-slate-500 text-sm"},h(Ico,{name:"ChevronLeft",size:18})," Volver"),
+h("h2",{className:"text-slate-800 font-semibold text-lg"},"Reagendar cita"),
+h("p",{className:"text-sm text-amber-600"},"Solo puedes reagendar 1 vez."),
+h("div",null,h("p",{className:"text-sm font-medium text-slate-600 mb-2"},"Nuevo d\u00eda"),h("div",{className:"bg-white border border-brand-100 rounded-2xl p-3"},h("div",{className:"flex items-center justify-between mb-3"},h("button",{onClick:function(){cambiarMes(-1)},className:"text-slate-400 hover:text-brand-500 p-1"},h(Ico,{name:"ChevronLeft",size:18})),h("span",{className:"text-sm font-semibold text-slate-800"},meses[mesVista]+" "+anioVista),h("button",{onClick:function(){cambiarMes(1)},className:"text-slate-400 hover:text-brand-500 p-1"},h(Ico,{name:"ChevronRight",size:18}))),h("div",{className:"grid grid-cols-7 gap-1 text-center"},ds.map(function(d){return h("div",{key:d,className:"text-[11px] font-medium text-slate-400 py-1"},d)}),celdas.map(function(d,i){if(!d)return h("div",{key:"e"+i});var pas=esPasado(d);var dom=esDomingo(d);var snl=esSabNoLab(d);var dis=pas||dom||snl;var sel=nuevoDia&&nuevoDia.iso===diaISO(d);return h("button",{key:d,disabled:dis,onClick:function(){seleccionarDia({label:diaLabel(d),iso:diaISO(d)})},className:"h-9 w-full rounded-lg text-sm transition "+(sel?"bg-brand-500 text-white font-medium":dis?"text-slate-300 cursor-not-allowed":"text-slate-700 hover:bg-brand-50")},d)})))),
+nuevoDia&&h("div",null,h("p",{className:"text-sm font-medium text-slate-600 mb-2"},"Nuevo horario"),cargando?h("p",{className:"text-sm text-brand-500 text-center py-4"},"Consultando..."):horasLibres.length===0?h("div",{className:"bg-amber-50 border border-amber-200 rounded-xl p-3"},h("p",{className:"text-sm text-amber-800"},"No hay horarios disponibles.")):h("div",{className:"grid grid-cols-4 gap-2"},horasLibres.map(function(hr){return h("button",{key:hr,onClick:function(){setNuevaHora(hr)},className:"py-2 rounded-lg text-sm border transition "+(nuevaHora===hr?"bg-brand-500 text-white border-brand-500":"bg-white text-slate-600 border-slate-200")},hr)}))),
+nuevoDia&&nuevaHora&&h("button",{onClick:confirmarReagendar,className:"w-full text-white py-3 rounded-xl font-medium",style:{background:"linear-gradient(135deg,#2f5b8a,#3d7ab5)"}},"Confirmar reagendar \u00b7 "+nuevoDia.label+" "+nuevaHora));
+
 return h("div",{className:"p-4 space-y-4 fade-in"},h("h2",{className:"text-slate-800 font-semibold text-lg"},"Mis citas y pedidos"),
-h("div",null,h("h3",{className:"text-sm font-medium text-slate-500 mb-2"},"Citas"),data.appointments.length===0&&h("p",{className:"text-sm text-slate-400"},"Sin citas."),data.appointments.map(function(a){var ep=a.estadoPago||"pendiente_pago";var ei=ECITA[ep]||ECITA.pendiente_pago;return h("div",{key:a.id,className:"bg-white border border-brand-100 rounded-xl p-3 mb-2"},h("div",{className:"flex items-center gap-3"},h("div",{className:"h-9 w-9 rounded-lg bg-brand-50 text-brand-500 flex items-center justify-center"},h(Ico,{name:"Calendar",size:18})),h("div",{className:"flex-1"},h("p",{className:"text-sm font-medium text-slate-800"},a.servicio),h("p",{className:"text-xs text-slate-500"},a.fecha+" \u00b7 "+a.hora)),h("span",{className:"text-sm font-medium text-brand-500"},money(a.precio||0))),h("div",{className:"flex items-center justify-between mt-2"},h("span",{className:"text-[11px] px-2 py-0.5 rounded-full font-medium "+ei.c},ei.l),a.linkPago&&ep==="pendiente_pago"&&h("a",{href:a.linkPago,target:"_blank",className:"text-xs bg-brand-500 text-white px-3 py-1 rounded-lg"},"Pagar ahora")))})),
+h("div",null,h("h3",{className:"text-sm font-medium text-slate-500 mb-2"},"Citas"),data.appointments.length===0&&h("p",{className:"text-sm text-slate-400"},"Sin citas."),data.appointments.map(function(a){var ep=a.estadoPago||"pendiente_pago";var ei=ECITA[ep]||ECITA.pendiente_pago;return h("div",{key:a.id,className:"bg-white border border-brand-100 rounded-xl p-3 mb-2"},h("div",{className:"flex items-center gap-3"},h("div",{className:"h-9 w-9 rounded-lg bg-brand-50 text-brand-500 flex items-center justify-center"},h(Ico,{name:"Calendar",size:18})),h("div",{className:"flex-1"},h("p",{className:"text-sm font-medium text-slate-800"},a.servicio),h("p",{className:"text-xs text-slate-500"},a.fecha+" \u00b7 "+a.hora)),h("span",{className:"text-sm font-medium text-brand-500"},money(a.precio||0))),h("div",{className:"flex items-center justify-between mt-2"},h("span",{className:"text-[11px] px-2 py-0.5 rounded-full font-medium "+ei.c},ei.l),h("div",{className:"flex gap-2"},a.linkPago&&ep==="pendiente_pago"&&h("a",{href:a.linkPago,target:"_blank",className:"text-xs bg-brand-500 text-white px-3 py-1 rounded-lg"},"Pagar"),!a.reagendado?h("button",{onClick:function(){setReagendarId(a.id)},className:"text-xs text-brand-500 border border-brand-200 px-3 py-1 rounded-lg"},"Reagendar"):h("span",{className:"text-[10px] text-slate-400"},"Reagendado"))))})),
 h("div",null,h("h3",{className:"text-sm font-medium text-slate-500 mb-2"},"Pedidos"),data.orders.length===0&&h("p",{className:"text-sm text-slate-400"},"Sin pedidos."),data.orders.map(function(o){return h("div",{key:o.id,className:"bg-white border border-brand-100 rounded-xl p-3 mb-2"},h("div",{className:"flex justify-between items-center mb-1"},h("span",{className:"text-xs text-slate-400"},o.id),h("span",{className:"text-[11px] px-2 py-0.5 rounded-full font-medium "+ESTADOS[o.estado].color},ESTADOS[o.estado].label)),h("p",{className:"text-sm text-slate-700"},o.items.map(function(i){return i.nombre+" x"+i.qty}).join(", ")),h("p",{className:"text-sm font-semibold text-brand-500 mt-1"},money(o.total)))})));
 }
 
