@@ -300,6 +300,20 @@ o.telefono&&!o.linkPago&&o.estado==="pendiente"&&h("button",{onClick:()=>wa(o.te
 }
 function ACitas({data,ud,wa,showToast,config,loadCitasFromSheet}){
 const[el,setEl]=useState(null);const[lv,setLv]=useState("");
+const[showForm,setShowForm]=useState(false);
+const[citaForm,setCitaForm]=useState({paciente:"",telefono:"",servicio:"Consulta ginecológica",precio:800,fecha:"",hora:""});
+const SERVS=[{n:"Consulta ginecológica",p:800},{n:"Control prenatal",p:1200},{n:"Cita evaluación Cirugía estética",p:500},{n:"Cita de Fertilidad seguimiento",p:900},{n:"Chequeo Ginecológico",p:1200}];
+const HORAS=["08:00","09:00","10:00","11:00","12:00","13:00","14:00","15:00","16:00","17:00","18:00","19:00"];
+const agendarCitaAdmin=async()=>{
+if(!citaForm.paciente||!citaForm.telefono||!citaForm.fecha||!citaForm.hora)return showToast("Completa todos los campos","error");
+const diasSem=["Dom","Lun","Mar","Mié","Jue","Vie","Sáb"];
+const meses=["Ene","Feb","Mar","Abr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dic"];
+const d=new Date(citaForm.fecha+"T12:00:00");
+const fechaLabel=diasSem[d.getDay()]+" "+d.getDate()+" "+meses[d.getMonth()];
+const cita={id:"CITA-"+Math.floor(100+Math.random()*9e3),paciente:citaForm.paciente,telefono:citaForm.telefono,servicio:citaForm.servicio,fecha:fechaLabel,hora:citaForm.hora,precio:citaForm.precio,estadoPago:"pendiente_pago"};
+if(config?.webhookUrl){try{const r=await fetch(config.webhookUrl,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({action:"nueva_cita",cita,paciente:{nombre:citaForm.paciente,telefono:citaForm.telefono}})});const resp=await r.json();const item=Array.isArray(resp)?resp[0]:resp;const link=item&&(item.linkPago||item.init_point);if(link){wa(citaForm.telefono,"Hola "+citaForm.paciente+", tu cita de "+citaForm.servicio+" ha sido agendada para el "+fechaLabel+" a las "+citaForm.hora+". Realiza tu pago aquí: "+link+" - Dr. Gabriel Morales")}showToast("Cita agendada exitosamente")}catch(e){showToast("Error al agendar","error")}}
+setShowForm(false);setCitaForm({paciente:"",telefono:"",servicio:"Consulta ginecológica",precio:800,fecha:"",hora:""});loadCitasFromSheet();
+};
 const ECITA={pendiente_pago:{label:"Pago pendiente",color:"bg-amber-100 text-amber-800"},pagada:{label:"Pagada",color:"bg-emerald-100 text-emerald-800"},confirmada:{label:"Confirmada en Calendar",color:"bg-sky-100 text-sky-800"}};
 const setLinkCita=(id,lk)=>{
 const links=JSON.parse(localStorage.getItem("smi_cita_links")||"{}");
@@ -314,7 +328,17 @@ showToast("Pago confirmado. Cita creada en Calendar.");
 const pagos2=loadPagoStatus();pagos2[cita.id]="confirmada";savePagoStatus(pagos2);
 ud(d=>({...d,appointments:d.appointments.map(a=>a.id===cita.id?{...a,estadoPago:"confirmada"}:a)}));
 };
-return h("div",{className:"space-y-3 fade-in"},h("h3",{className:"font-semibold text-slate-800 text-lg mb-1"},"Citas agendadas"),
+return h("div",{className:"space-y-3 fade-in"},
+h("div",{className:"flex justify-between items-center mb-1"},h("h3",{className:"font-semibold text-slate-800 text-lg"},"Citas agendadas"),h("button",{onClick:()=>setShowForm(!showForm),className:"flex items-center gap-1 bg-brand-600 text-white px-3 py-1.5 rounded-lg text-sm font-medium hover:bg-brand-500"},h(Ico,{name:showForm?"X":"Plus",size:14}),showForm?" Cancelar":" Nueva cita")),
+showForm&&h("div",{className:"bg-white border border-brand-200 rounded-2xl p-4 space-y-3"},
+h("p",{className:"font-medium text-slate-700 text-sm"},"Agendar cita manualmente"),
+h("div",{className:"grid grid-cols-2 gap-3"},
+h("input",{value:citaForm.paciente,onChange:e=>setCitaForm(f=>({...f,paciente:e.target.value})),placeholder:"Nombre paciente",className:"border border-slate-200 rounded-lg px-3 py-2 text-sm col-span-2"}),
+h("input",{value:citaForm.telefono,onChange:e=>setCitaForm(f=>({...f,telefono:e.target.value})),placeholder:"WhatsApp (10 dígitos)",type:"tel",className:"border border-slate-200 rounded-lg px-3 py-2 text-sm col-span-2"}),
+h("select",{value:citaForm.servicio,onChange:e=>{const s=SERVS.find(x=>x.n===e.target.value);setCitaForm(f=>({...f,servicio:e.target.value,precio:s?s.p:0}))},className:"border border-slate-200 rounded-lg px-3 py-2 text-sm col-span-2"},SERVS.map(s=>h("option",{key:s.n,value:s.n},s.n," - $",s.p))),
+h("input",{type:"date",value:citaForm.fecha,onChange:e=>setCitaForm(f=>({...f,fecha:e.target.value})),className:"border border-slate-200 rounded-lg px-3 py-2 text-sm"}),
+h("select",{value:citaForm.hora,onChange:e=>setCitaForm(f=>({...f,hora:e.target.value})),className:"border border-slate-200 rounded-lg px-3 py-2 text-sm"},h("option",{value:""},"Hora..."),HORAS.map(hr=>h("option",{key:hr,value:hr},hr)))),
+h("button",{onClick:agendarCitaAdmin,className:"w-full bg-emerald-600 text-white py-2 rounded-lg text-sm font-medium hover:bg-emerald-500"},"Agendar y enviar link de pago por WhatsApp")),
 data.appointments.length===0&&h("p",{className:"text-sm text-slate-400"},"Sin citas."),
 data.appointments.map(a=>{
 const estado=a.estadoPago||"pendiente_pago";
