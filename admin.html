@@ -57,6 +57,12 @@ const obj={};hdr.forEach((k,i)=>obj[k]=vals[i]||'');return obj;
 const PAGO_KEY="smi_cita_pagos";
 function loadPagoStatus(){try{return JSON.parse(localStorage.getItem(PAGO_KEY))||{}}catch(e){return{}}}
 function savePagoStatus(m){try{localStorage.setItem(PAGO_KEY,JSON.stringify(m))}catch(e){}}
+const PED_ESTADO_KEY="smi_pedido_estados";
+const PED_LINK_KEY="smi_pedido_links";
+function loadPedEstados(){try{return JSON.parse(localStorage.getItem(PED_ESTADO_KEY))||{}}catch(e){return{}}}
+function savePedEstados(m){try{localStorage.setItem(PED_ESTADO_KEY,JSON.stringify(m))}catch(e){}}
+function loadPedLinks(){try{return JSON.parse(localStorage.getItem(PED_LINK_KEY))||{}}catch(e){return{}}}
+function savePedLinks(m){try{localStorage.setItem(PED_LINK_KEY,JSON.stringify(m))}catch(e){}}
 
 function Ico({name,size=20,className=""}){
 const paths={
@@ -100,8 +106,7 @@ enviado:{label:"Enviado",color:"bg-sky-100 text-sky-800"},
 entregado:{label:"Entregado",color:"bg-slate-200 text-slate-600"}
 };
 const LS="smi_data",LS_C="smi_cfg";
-function ld(){try{const d=JSON.parse(localStorage.getItem(LS));if(d&&d.orders)return{...d,appointments:[]}}catch(e){}
-return{orders:[],appointments:[],products:[]}}
+function ld(){return{orders:[],appointments:[],products:[]}}
 function sv(d){try{localStorage.setItem(LS,JSON.stringify(d))}catch(e){}}
 function lc(){try{const c=JSON.parse(localStorage.getItem(LS_C))||{};if(!c.webhookUrl)c.webhookUrl="https://solucionesmedicasintegral.app.n8n.cloud/webhook/app-pacientes";return c}catch(e){return{webhookUrl:"https://solucionesmedicasintegral.app.n8n.cloud/webhook/app-pacientes"}}}
 function sc(c){try{localStorage.setItem(LS_C,JSON.stringify(c))}catch(e){}}
@@ -170,6 +175,30 @@ setData(p=>({...p,appointments:citas}));
 }catch(e){console.log("Error cargando citas:",e)}
 },[]);
 
+const loadPedidosFromSheet=useCallback(async()=>{
+try{
+const res=await fetch(PEDIDOS_SHEET_URL);
+if(!res.ok)return;
+const text=await res.text();
+const rows=parseCSVFull(text);
+const estados=loadPedEstados();
+const links=loadPedLinks();
+const pedidos=rows.map(r=>({
+id:r.ID||("p"+Date.now()+Math.random().toString(36).slice(2,5)),
+paciente:r.Paciente||"",
+telefono:(r.Telefono||"").replace(/\D/g,''),
+itemsText:r.Items||"",
+items:[],
+total:parseFloat(r.Total)||0,
+estado:estados[r.ID]||r.Estado||"pendiente",
+fecha:r.Fecha||"",
+sub:r.Suscripcion==="true"||r.Suscripcion==="1"||false,
+linkPago:links[r.ID]||""
+}));
+setData(p=>({...p,orders:pedidos}));
+}catch(e){console.log("Error cargando pedidos:",e)}
+},[]);
+
 const requestNotifPermission=useCallback(()=>{
 if("Notification" in window && Notification.permission==="default"){
 Notification.requestPermission();
@@ -217,6 +246,24 @@ linkPago:links[r.ID]||""
 }));
 setData(p=>({...p,appointments:citas}));
 }
+if(pedidosRes){
+const prows=parseCSVFull(pedidosRes);
+const pestados=loadPedEstados();
+const plinks=loadPedLinks();
+const pedidos=prows.map(r=>({
+id:r.ID||("p"+Date.now()+Math.random().toString(36).slice(2,5)),
+paciente:r.Paciente||"",
+telefono:(r.Telefono||"").replace(/\D/g,''),
+itemsText:r.Items||"",
+items:[],
+total:parseFloat(r.Total)||0,
+estado:pestados[r.ID]||r.Estado||"pendiente",
+fecha:r.Fecha||"",
+sub:r.Suscripcion==="true"||r.Suscripcion==="1"||false,
+linkPago:plinks[r.ID]||""
+}));
+setData(p=>({...p,orders:pedidos}));
+}
 }catch(e){console.log("Polling error:",e)}
 },[]);
 
@@ -239,6 +286,7 @@ setShowNotifPanel(false);
 useEffect(()=>{
 requestNotifPermission();
 loadCitasFromSheet();
+loadPedidosFromSheet();
 checkNewData();
 const interval=setInterval(checkNewData,60000);
 return()=>clearInterval(interval);
@@ -246,8 +294,8 @@ return()=>clearInterval(interval);
 
 const ing=data.orders.filter(o=>o.estado!=="pendiente").reduce((a,o)=>a+o.total,0);
 const subs=data.orders.filter(o=>o.sub).length;
-const avanzar=id=>{const fl=["pendiente","pagado","enviado","entregado"];ud(d=>({...d,orders:d.orders.map(o=>{if(o.id!==id)return o;const i=fl.indexOf(o.estado);return{...o,estado:fl[Math.min(i+1,fl.length-1)]}})}));showToast("Estado actualizado")};
-const setLink=(id,lk)=>ud(d=>({...d,orders:d.orders.map(o=>o.id===id?{...o,linkPago:lk}:o)}));
+const avanzar=id=>{const fl=["pendiente","pagado","enviado","entregado"];setData(p=>{const updated=p.orders.map(o=>{if(o.id!==id)return o;const i=fl.indexOf(o.estado);const ne=fl[Math.min(i+1,fl.length-1)];const es=loadPedEstados();es[id]=ne;savePedEstados(es);return{...o,estado:ne}});return{...p,orders:updated}});showToast("Estado actualizado")};
+const setLink=(id,lk)=>{setData(p=>{const updated=p.orders.map(o=>o.id===id?{...o,linkPago:lk}:o);const ls=loadPedLinks();ls[id]=lk;savePedLinks(ls);return{...p,orders:updated}})};
 const wa=(tel,msg)=>window.open("https://wa.me/52"+tel+"?text="+encodeURIComponent(msg),"_blank");
 const logout=()=>{localStorage.removeItem("smi_admin_auth");location.reload()};
 return h("div",{className:"min-h-screen",style:{background:"linear-gradient(135deg,#ecfdf5,#d1fae5)"}},
@@ -257,7 +305,7 @@ h("div",{className:"text-white rounded-2xl px-6 py-4 flex items-center justify-b
 h("div",{className:"flex items-center gap-3"},h("img",{src:LOGO,alt:"Logo",className:"h-10 opacity-90"}),h("div",null,h("p",{className:"text-emerald-300 text-xs font-medium"},"PANEL ADMINISTRADOR"),h("p",{className:"font-display font-semibold text-lg"},"Dr. Gabriel Morales"))),
 h("div",{className:"flex items-center gap-2"},
 h(NotifBell,{count:notifCount,onClick:()=>{if(notifCount>0){showToast(notifMessages.join(" · "));markAsSeen()}else{showToast("Sin notificaciones nuevas")}}}),
-h("button",{onClick:()=>{checkNewData();loadCitasFromSheet();showToast("Datos actualizados")},className:"p-2 rounded-lg hover:bg-white/10 transition text-emerald-200",title:"Actualizar"},h(Ico,{name:"RefreshCw",size:18})),
+h("button",{onClick:()=>{checkNewData();loadCitasFromSheet();loadPedidosFromSheet();showToast("Datos actualizados")},className:"p-2 rounded-lg hover:bg-white/10 transition text-emerald-200",title:"Actualizar"},h(Ico,{name:"RefreshCw",size:18})),
 h("div",{className:"flex gap-1 bg-white/10 rounded-lg p-1 flex-wrap"},
 [["resumen","Resumen"],["pedidos","Pedidos"],["citas","Citas"],["prod","Productos"],["config","Config"]].map(([k,l])=>h("button",{key:k,onClick:()=>setTab(k),className:"px-3 py-1.5 rounded-md text-sm transition "+(tab===k?"bg-brand-600 text-white":"text-emerald-200 hover:text-white")},l))),
 h("button",{onClick:logout,className:"text-emerald-300 hover:text-white ml-2",title:"Cerrar sesión"},h(Ico,{name:"Lock",size:18})))),
@@ -280,15 +328,15 @@ h("div",{className:"bg-slate-50 rounded-2xl p-5"},h("h3",{className:"font-semibo
 data.orders.length===0&&data.appointments.length===0&&h("p",{className:"text-sm text-slate-400"},"Sin actividad aún."),
 h("div",{className:"space-y-2"},
 data.appointments.slice(0,5).map(a=>{const ECITA={pendiente_pago:{label:"Pago pendiente",color:"bg-amber-100 text-amber-800"},pagada:{label:"Pagada",color:"bg-emerald-100 text-emerald-800"},confirmada:{label:"Confirmada",color:"bg-sky-100 text-sky-800"}};const ei=ECITA[a.estadoPago||"pendiente_pago"]||ECITA.pendiente_pago;return h("div",{key:"a"+a.id,className:"flex justify-between items-center text-sm border-b border-slate-200 pb-2"},h("span",{className:"text-slate-600"},"🗓 ",a.fecha," ",a.hora," · ",a.paciente),h("div",{className:"flex items-center gap-2"},h("span",{className:"text-[11px] px-2 py-0.5 rounded-full font-medium "+ei.color},ei.label),h("span",{className:"font-medium"},money(a.precio||0))))}),
-data.orders.slice(0,5).map(o=>h("div",{key:"o"+o.id,className:"flex justify-between items-center text-sm border-b border-slate-200 pb-2"},h("span",{className:"text-slate-600"},"📦 ",o.fecha," · ",o.paciente),h("div",{className:"flex items-center gap-2"},h("span",{className:"text-[11px] px-2 py-0.5 rounded-full font-medium "+ESTADOS[o.estado].color},ESTADOS[o.estado].label),h("span",{className:"font-medium"},money(o.total))))))));
+data.orders.slice(0,5).map(o=>h("div",{key:"o"+o.id,className:"flex justify-between items-center text-sm border-b border-slate-200 pb-2"},h("span",{className:"text-slate-600"},"📦 ",o.fecha," · ",o.paciente),h("div",{className:"flex items-center gap-2"},h("span",{className:"text-[11px] px-2 py-0.5 rounded-full font-medium "+((ESTADOS[o.estado]||ESTADOS.pendiente).color)},((ESTADOS[o.estado]||ESTADOS.pendiente).label)),h("span",{className:"font-medium"},money(o.total))))))));
 }
 function APedidos({data,avanzar,setLink,wa,showToast}){
 const[el,setEl]=useState(null);const[lv,setLv]=useState("");
 return h("div",{className:"space-y-3 fade-in"},h("h3",{className:"font-semibold text-slate-800 text-lg"},"Pedidos"),
 data.orders.length===0&&h("p",{className:"text-sm text-slate-400"},"Sin pedidos."),
 data.orders.map(o=>h("div",{key:o.id,className:"bg-slate-50 border border-brand-100 rounded-2xl p-4"},
-h("div",{className:"flex justify-between items-start mb-2"},h("div",null,h("div",{className:"flex items-center gap-2"},h("span",{className:"text-xs text-slate-400"},o.id),h("span",{className:"text-[11px] px-2 py-0.5 rounded-full font-medium "+ESTADOS[o.estado].color},ESTADOS[o.estado].label)),h("p",{className:"font-medium text-slate-800 mt-1"},o.paciente),o.telefono&&h("p",{className:"text-xs text-slate-500"},"📱 ",o.telefono)),h("span",{className:"text-lg font-semibold text-brand-600"},money(o.total))),
-h("p",{className:"text-sm text-slate-600 mb-3"},o.items.map(i=>i.nombre+" ×"+i.qty).join(", ")),
+h("div",{className:"flex justify-between items-start mb-2"},h("div",null,h("div",{className:"flex items-center gap-2"},h("span",{className:"text-xs text-slate-400"},o.id),h("span",{className:"text-[11px] px-2 py-0.5 rounded-full font-medium "+((ESTADOS[o.estado]||ESTADOS.pendiente).color)},((ESTADOS[o.estado]||ESTADOS.pendiente).label))),h("p",{className:"font-medium text-slate-800 mt-1"},o.paciente),o.telefono&&h("p",{className:"text-xs text-slate-500"},"📱 ",o.telefono)),h("span",{className:"text-lg font-semibold text-brand-600"},money(o.total))),
+h("p",{className:"text-sm text-slate-600 mb-3"},o.itemsText||o.items.map(i=>i.nombre+" ×"+i.qty).join(", ")||"Sin detalle"),
 h("div",{className:"bg-white rounded-xl p-3 mb-3"},h("p",{className:"text-xs font-medium text-slate-500 mb-1.5"},"🔗 Link de pago"),
 o.linkPago&&el!==o.id?h("div",{className:"flex items-center gap-2"},h("a",{href:o.linkPago,target:"_blank",className:"text-sm text-brand-600 underline truncate flex-1"},o.linkPago),h("button",{onClick:()=>{setEl(o.id);setLv(o.linkPago)},className:"text-slate-400 hover:text-slate-600"},h(Ico,{name:"Settings",size:14})))
 :el===o.id?h("div",{className:"flex gap-2"},h("input",{value:lv,onChange:e=>setLv(e.target.value),placeholder:"Link de pago...",className:"flex-1 border border-slate-200 rounded-lg px-3 py-1.5 text-sm"}),h("button",{onClick:()=>{setLink(o.id,lv);setEl(null);showToast("Link guardado")},className:"bg-brand-600 text-white px-3 py-1.5 rounded-lg text-sm"},h(Ico,{name:"Check",size:14})),h("button",{onClick:()=>setEl(null),className:"text-slate-400"},h(Ico,{name:"X",size:14})))
