@@ -43,6 +43,7 @@ const{useState,useEffect,useRef,useCallback}=React;
 const PRODUCTS_CSV="https://docs.google.com/spreadsheets/d/e/2PACX-1vSTTwObvgTnlsDDxp_u8WCJV7XJfgoOCtS3cLeTO8A_BUxJfVAOK6ZZVKBIto0FPbtbcmZJOTxDEQeY/pub?output=csv";
 const CITAS_SHEET_URL="https://docs.google.com/spreadsheets/d/e/2PACX-1vRxfsAZV45rIJ4nC-oaDme_LPHmAHELf51bxrlcGFQNRAPez4paMXBPAKgefg5xPkkPb6NMog9Jcvdb/pub?output=csv";
 const PEDIDOS_SHEET_URL="https://docs.google.com/spreadsheets/d/e/2PACX-1vQbQkIq5Itx1D-sOzsax4sf6H38OtqAFhdF5N-P06GCYWy92sbcBHydoGLD0Bz76bgiNSMhACI7s9Eo/pub?output=csv";
+const SERVICIOS_CSV="https://docs.google.com/spreadsheets/d/e/2PACX-1vSTTwObvgTnlsDDxp_u8WCJV7XJfgoOCtS3cLeTO8A_BUxJfVAOK6ZZVKBIto0FPbtbcmZJOTxDEQeY/pub?gid=19359652&single=true&output=csv";
 const h=React.createElement;
 
 function parseCSVRows(text){
@@ -299,7 +300,9 @@ const interval=setInterval(checkNewData,60000);
 return()=>clearInterval(interval);
 },[]);
 
-const[servicios,setServicios]=useState([]); const loadServiciosFromSheet=useCallback(async()=>{try{const res=await fetch(SERVICIOS_CSV);if(!res.ok)return;const text=await res.text();const rows=parseCSVFull(text);const svcs=rows.map(r=>({id:r.ID||"",nombre:r.Nombre||"",categoria:r.Categoria||"",duracion:parseInt(r.Duracion)||60,precio:parseFloat(r.Precio)||0,meses:parseInt(r.Meses)||1,icono:r.Icono||"Stethoscope"}));setServicios(svcs)}catch(e){console.log("Error servicios:",e)}},[]); const ing=data.orders.filter(o=>o.estado!=="pendiente").reduce((a,o)=>a+o.total,0);
+const[servicios,setServicios]=useState([]); const loadServiciosFromSheet=useCallback(async()=>{try{const res=await fetch(SERVICIOS_CSV);if(!res.ok)return;const text=await res.text();const rows=parseCSVFull(text);const svcs=rows.map(r=>({id:r.ID||"",nombre:r.Nombre||"",categoria:r.Categoria||"",duracion:parseInt(r.Duracion)||60,precio:parseFloat(r.Precio)||0,meses:parseInt(r.Meses)||1,icono:r.Icono||"Stethoscope"}));setServicios(svcs)}catch(e){console.log("Error servicios:",e)}},[]); const[servicios,setServicios]=useState([]);
+const loadServiciosFromSheet=useCallback(async()=>{try{const res=await fetch(SERVICIOS_CSV);if(!res.ok)return;const text=await res.text();const rows=parseCSVFull(text);const svcs=rows.map(r=>({id:r.ID||"",nombre:r.Nombre||"",categoria:r.Categoria||"",duracion:parseInt(r.Duracion)||60,precio:parseFloat(r.Precio)||0,meses:parseInt(r.Meses)||1,icono:r.Icono||"Stethoscope"}));setServicios(svcs)}catch(e){console.log("Error servicios:",e)}},[]);
+const ing=data.orders.filter(o=>o.estado!=="pendiente").reduce((a,o)=>a+o.total,0);
 const subs=data.orders.filter(o=>o.sub).length;
 const avanzar=id=>{const fl=["pendiente","pagado","enviado","entregado"];setData(p=>{const updated=p.orders.map(o=>{if(o.id!==id)return o;const i=fl.indexOf(o.estado);const ne=fl[Math.min(i+1,fl.length-1)];const es=loadPedEstados();es[id]=ne;savePedEstados(es);return{...o,estado:ne}});return{...p,orders:updated}});showToast("Estado actualizado")};
 const setLink=(id,lk)=>{setData(p=>{const updated=p.orders.map(o=>o.id===id?{...o,linkPago:lk}:o);const ls=loadPedLinks();ls[id]=lk;savePedLinks(ls);return{...p,orders:updated}})};
@@ -312,7 +315,7 @@ h("div",{className:"text-white rounded-2xl px-6 py-4 flex items-center justify-b
 h("div",{className:"flex items-center gap-3"},h("img",{src:LOGO,alt:"Logo",className:"h-10 opacity-90"}),h("div",null,h("p",{className:"text-emerald-300 text-xs font-medium"},"PANEL ADMINISTRADOR"),h("p",{className:"font-display font-semibold text-lg"},"Dr. Gabriel Morales"))),
 h("div",{className:"flex items-center gap-2"},
 h(NotifBell,{count:notifCount,onClick:()=>{if(notifCount>0){showToast(notifMessages.join(" · "));markAsSeen()}else{showToast("Sin notificaciones nuevas")}}}),
-h("button",{onClick:()=>{checkNewData();loadCitasFromSheet();loadPedidosFromSheet();showToast("Datos actualizados")},className:"p-2 rounded-lg hover:bg-white/10 transition text-emerald-200",title:"Actualizar"},h(Ico,{name:"RefreshCw",size:18})),
+h("button",{onClick:()=>{checkNewData();loadCitasFromSheet();loadPedidosFromSheet();loadServiciosFromSheet();showToast("Datos actualizados")},className:"p-2 rounded-lg hover:bg-white/10 transition text-emerald-200",title:"Actualizar"},h(Ico,{name:"RefreshCw",size:18})),
 h("div",{className:"flex gap-1 bg-white/10 rounded-lg p-1 flex-wrap"},
 [["resumen","Resumen"],["pedidos","Pedidos"],["citas","Citas"],["prod","Productos"],["config","Config"]].map(([k,l])=>h("button",{key:k,onClick:()=>setTab(k),className:"px-3 py-1.5 rounded-md text-sm transition "+(tab===k?"bg-brand-600 text-white":"text-emerald-200 hover:text-white")},l))),
 h("button",{onClick:logout,className:"text-emerald-300 hover:text-white ml-2",title:"Cerrar sesión"},h(Ico,{name:"Lock",size:18})))),
@@ -356,7 +359,7 @@ o.telefono&&!o.linkPago&&o.estado==="pendiente"&&h("button",{onClick:()=>wa(o.te
 function ACitas({data,ud,wa,showToast,config,loadCitasFromSheet}){
 const[el,setEl]=useState(null);const[lv,setLv]=useState("");
 const[showForm,setShowForm]=useState(false);
-const[citaForm,setCitaForm]=useState({paciente:"",telefono:"",servicio:"Consulta ginecológica",precio:800,fecha:"",hora:""});
+const[citaForm,setCitaForm]=useState({paciente:"",telefono:"",servicio:"",precio:0,meses:1,fecha:"",hora:""});
 const SERVS=props.servicios&&props.servicios.length>0?props.servicios.map(s=>({n:s.nombre,p:s.precio,m:s.meses,cat:s.categoria})):[{n:"Consulta ginecológica",p:800,m:1,cat:"Consulta"}];
 const HORAS=["08:00","09:00","10:00","11:00","12:00","13:00","14:00","15:00","16:00","17:00","18:00","19:00"];
 const agendarCitaAdmin=async()=>{
@@ -365,7 +368,7 @@ const diasSem=["Dom","Lun","Mar","Mié","Jue","Vie","Sáb"];
 const meses=["Ene","Feb","Mar","Abr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dic"];
 const d=new Date(citaForm.fecha+"T12:00:00");
 const fechaLabel=diasSem[d.getDay()]+" "+d.getDate()+" "+meses[d.getMonth()];
-const cita={id:"CITA-"+Math.floor(100+Math.random()*9e3),paciente:citaForm.paciente,telefono:citaForm.telefono,servicio:citaForm.servicio,fecha:fechaLabel,hora:citaForm.hora,precio:citaForm.precio,estadoPago:"pendiente_pago"};
+const cita={id:"CITA-"+Math.floor(100+Math.random()*9e3),paciente:citaForm.paciente,telefono:citaForm.telefono,servicio:citaForm.servicio,fecha:fechaLabel,hora:citaForm.hora,precio:citaForm.precio,meses:citaForm.meses||1,estadoPago:"pendiente_pago"};
 if(config?.webhookUrl){try{const r=await fetch(config.webhookUrl,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({action:"nueva_cita",cita,paciente:{nombre:citaForm.paciente,telefono:citaForm.telefono}})});const resp=await r.json();const item=Array.isArray(resp)?resp[0]:resp;const link=item&&(item.linkPago||item.init_point);if(link){wa(citaForm.telefono,"Hola "+citaForm.paciente+", tu cita de "+citaForm.servicio+" ha sido agendada para el "+fechaLabel+" a las "+citaForm.hora+". Realiza tu pago aquí: "+link+" - Dr. Gabriel Morales")}showToast("Cita agendada exitosamente")}catch(e){showToast("Error al agendar","error")}}
 setShowForm(false);setCitaForm({paciente:"",telefono:"",servicio:"",precio:0,meses:1,fecha:"",hora:""});loadCitasFromSheet();
 };
