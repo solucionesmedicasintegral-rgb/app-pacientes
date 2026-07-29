@@ -300,7 +300,7 @@ const interval=setInterval(checkNewData,60000);
 return()=>clearInterval(interval);
 },[]);
 
-const[servicios,setServicios]=useState([]); const loadServiciosFromSheet=useCallback(async()=>{try{const res=await fetch(SERVICIOS_CSV);if(!res.ok)return;const text=await res.text();const rows=parseCSVFull(text);const svcs=rows.map(r=>({id:r.ID||"",nombre:r.Nombre||"",categoria:r.Categoria||"",duracion:parseInt(r.Duracion)||60,precio:parseFloat(r.Precio)||0,meses:parseInt(r.Meses)||1,icono:r.Icono||"Stethoscope"}));setServicios(svcs)}catch(e){console.log("Error servicios:",e)}},[]); const[servicios,setServicios]=useState([]);
+const[servicios,setServicios]=useState([]); const loadServiciosFromSheet=useCallback(async()=>{try{const res=await fetch(SERVICIOS_CSV);if(!res.ok)return;const text=await res.text();const rows=parseCSVFull(text);const svcs=rows.map(r=>({id:r.ID||"",nombre:r.Nombre||"",categoria:r.Categoria||"",duracion:parseInt(r.Duracion)||60,precio:parseFloat(r.Precio)||0,meses:parseInt(r.Meses)||1,icono:r.Icono||"Stethoscope"}));setServicios(svcs)}catch(e){console.log("Error servicios:",e)}},[]);
 const loadServiciosFromSheet=useCallback(async()=>{try{const res=await fetch(SERVICIOS_CSV);if(!res.ok)return;const text=await res.text();const rows=parseCSVFull(text);const svcs=rows.map(r=>({id:r.ID||"",nombre:r.Nombre||"",categoria:r.Categoria||"",duracion:parseInt(r.Duracion)||60,precio:parseFloat(r.Precio)||0,meses:parseInt(r.Meses)||1,icono:r.Icono||"Stethoscope"}));setServicios(svcs)}catch(e){console.log("Error servicios:",e)}},[]);
 const ing=data.orders.filter(o=>o.estado!=="pendiente").reduce((a,o)=>a+o.total,0);
 const subs=data.orders.filter(o=>o.sub).length;
@@ -356,11 +356,11 @@ o.estado!=="entregado"&&h("button",{onClick:()=>avanzar(o.id),className:"text-br
 o.telefono&&o.linkPago&&h("button",{onClick:()=>wa(o.telefono,"Hola "+o.paciente+", aquí tienes tu link de pago para tu pedido "+o.id+": "+o.linkPago+" - Dr. Gabriel Morales"),className:"text-green-700 text-sm font-medium flex items-center gap-1 bg-green-50 px-3 py-1.5 rounded-lg hover:bg-green-100"},h(Ico,{name:"Send",size:14})," WhatsApp link"),
 o.telefono&&!o.linkPago&&o.estado==="pendiente"&&h("button",{onClick:()=>wa(o.telefono,"Hola "+o.paciente+", recibí tu pedido "+o.id+" por "+money(o.total)+". En breve te envío tu link de pago. - Dr. Gabriel Morales"),className:"text-green-700 text-sm font-medium flex items-center gap-1 bg-green-50 px-3 py-1.5 rounded-lg hover:bg-green-100"},h(Ico,{name:"Phone",size:14})," Avisar")))));
 }
-function ACitas({data,ud,wa,showToast,config,loadCitasFromSheet}){
+function ACitas({data,ud,wa,showToast,config,loadCitasFromSheet,servicios}){
 const[el,setEl]=useState(null);const[lv,setLv]=useState("");
 const[showForm,setShowForm]=useState(false);
 const[citaForm,setCitaForm]=useState({paciente:"",telefono:"",servicio:"",precio:0,meses:1,fecha:"",hora:""});
-const SERVS=props.servicios&&props.servicios.length>0?props.servicios.map(s=>({n:s.nombre,p:s.precio,m:s.meses,cat:s.categoria})):[{n:"Consulta ginecológica",p:800,m:1,cat:"Consulta"}];
+const SERVS=servicios&&servicios.length>0?servicios.map(s=>({n:s.nombre,p:s.precio,m:s.meses,cat:s.categoria})):[{n:"Consulta ginecológica",p:800,m:1,cat:"Consulta"}];
 const HORAS=["08:00","09:00","10:00","11:00","12:00","13:00","14:00","15:00","16:00","17:00","18:00","19:00"];
 const agendarCitaAdmin=async()=>{
 if(!citaForm.paciente||!citaForm.telefono||!citaForm.fecha||!citaForm.hora)return showToast("Completa todos los campos","error");
