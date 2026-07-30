@@ -206,8 +206,7 @@ setData(p=>({...p,orders:pedidos}));
 }catch(e){console.log("Error cargando pedidos:",e)}
 },[]);
 const[servicios,setServicios]=useState([]);
-const loadServiciosFromSheet=useCallback(async()=>{try{const res=await fetch(SERVICIOS_CSV);if(!res.ok)return;const text=await res.text();const rows=parseCSVFull(text);const svcs=rows.map(r=>({id:r.ID||"",nombre:r.Nombre||"",categoria:r.Categoria||"",duracion:parseInt(r.Duracion)||60,precio:parseFloat(r.Precio)||0,meses:parseInt(r.Meses)||1,icono:r.Icono||"Stethoscope"}));setServicios(svcs)}catch(e){console.log("Error servicios:",e)}},[]);
-const requestNotifPermission=useCallback(()=>{
+const ing=data.ordersconst requestNotifPermission=useCallback(()=>{
 if("Notification" in window && Notification.permission==="default"){
 Notification.requestPermission();
 }
